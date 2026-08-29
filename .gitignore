@@ -1,0 +1,32 @@
+__pycache__/
+*.py[cod]
+
+.venv/
+venv/
+env/
+
+.ipynb_checkpoints/
+
+# Datasets
+yolo_tiled/
+yolo_tiled_1000/
+
+# Training outputs
+runs/
+
+# Model weights
+*.pt
+*.pth
+*.onnx
+*.engine
+
+# Large archives
+*.zip
+*.tar
+*.tar.gz
+
+# OS files
+.DS_Store
+Thumbs.db
+data/
+yolo_ready/
