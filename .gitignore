@@ -30,3 +30,17 @@ runs/
 Thumbs.db
 data/
 yolo_ready/
+# Generated segmentation data
+segmentation_dataset/
+segmentation_annotation/
+cvat_export/
+
+# Generated reports
+reports/
+
+# Model files
+models/
+*.pt
+*.pth
+*.onnx
+*.engine
