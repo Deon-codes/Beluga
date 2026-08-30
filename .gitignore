@@ -30,3 +30,15 @@ runs/
 Thumbs.db
 data/
 yolo_ready/
+
+# Frontend dependencies and generated output
+node_modules/
+app/frontend/node_modules/
+app/frontend/dist/
+app/frontend/.vite/
+app/frontend/.cache/
+
+# Common build artifacts
+/dist/
+/.vite/
+.cache/
