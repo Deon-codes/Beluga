@@ -96,21 +96,14 @@ def find_positive_samples(n=5):
     return random.sample(positives, min(n, len(positives)))
 
 
-print("Loading model...")
-yolo = YOLO(BEST_PT)
-model = yolo.model
-model.eval()
-device = torch.device("cpu")
-model = model.to(device)
-print(f"Using device: {device}")
-
-samples = find_positive_samples(5)
-
-for path in samples:
+def run_tta_uncertainty(model, path, device, n_passes=N_PASSES, conf_thres=CONF_THRES, iou_thres=IOU_THRES):
+    """Run n_passes stochastic TTA forward passes on one image and return a
+    list of {class_name, conf, std} dicts, one per kept post-NMS detection
+    (empty list if nothing clears conf_thres)."""
     base_img = preprocess_base(path)
     pass_outputs = []
     with torch.no_grad():
-        for _ in range(N_PASSES):
+        for _ in range(n_passes):
             aug_img = augment(base_img)
             tensor = to_tensor(aug_img).to(device)
             out = model(tensor)
@@ -126,23 +119,50 @@ for path in samples:
     conf_mean = conf_per_pass.mean(dim=0)
     conf_std = conf_per_pass.std(dim=0)
 
-    keep_mask = conf_mean > CONF_THRES
+    keep_mask = conf_mean > conf_thres
     if keep_mask.sum() == 0:
-        print(f"\n{os.path.basename(path)}: no detections above conf={CONF_THRES}")
-        continue
+        return []
 
     boxes_xyxy = xywh_to_xyxy(boxes_mean[keep_mask])
     scores = conf_mean[keep_mask]
     classes = class_id_mean[keep_mask]
     stds = conf_std[keep_mask]
 
-    nms_idx = torchvision.ops.nms(boxes_xyxy, scores, IOU_THRES)
+    nms_idx = torchvision.ops.nms(boxes_xyxy, scores, iou_thres)
 
-    print(f"\n{os.path.basename(path)}: {len(nms_idx)} detection(s) after NMS "
-          f"(from {int(keep_mask.sum())} candidate anchors)")
-    for i in nms_idx:
-        cls_name = CLASSES[classes[i].item()]
-        print(f"  class={cls_name:16s} conf={scores[i].item():.3f} +/- {stds[i].item():.3f} "
-              f"(uncertainty={'HIGH' if stds[i].item() > 0.05 else 'low'})")
+    return [
+        {
+            "class_name": CLASSES[classes[i].item()],
+            "conf": scores[i].item(),
+            "std": stds[i].item(),
+        }
+        for i in nms_idx
+    ]
 
-print(f"\nDone. {N_PASSES} TTA passes per image (brightness/gamma/noise jitter, anchor-aligned).")
+
+def main():
+    print("Loading model...")
+    yolo = YOLO(BEST_PT)
+    model = yolo.model
+    model.eval()
+    device = torch.device("cpu")
+    model = model.to(device)
+    print(f"Using device: {device}")
+
+    samples = find_positive_samples(5)
+
+    for path in samples:
+        dets = run_tta_uncertainty(model, path, device)
+        if not dets:
+            print(f"\n{os.path.basename(path)}: no detections above conf={CONF_THRES}")
+            continue
+        print(f"\n{os.path.basename(path)}: {len(dets)} detection(s) after NMS")
+        for d in dets:
+            print(f"  class={d['class_name']:16s} conf={d['conf']:.3f} +/- {d['std']:.3f} "
+                  f"(uncertainty={'HIGH' if d['std'] > 0.05 else 'low'})")
+
+    print(f"\nDone. {N_PASSES} TTA passes per image (brightness/gamma/noise jitter, anchor-aligned).")
+
+
+if __name__ == "__main__":
+    main()
