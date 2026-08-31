@@ -9,13 +9,13 @@ export default function Detections() {
   const navigate = useNavigate();
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-6 p-6">
+      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="text-4xl font-bold text-light-text dark:text-dark-text mb-2">
+          <h1 className="mb-2 text-4xl font-bold">
             Detections
           </h1>
-          <p className="text-light-text-secondary dark:text-dark-text-secondary">
+          <p className="text-slate-400">
             AI-detected objects from sonar analysis
           </p>
         </div>

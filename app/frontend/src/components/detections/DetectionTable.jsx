@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { detections } from '../../data/mockData';
-import { Search, Filter } from 'lucide-react';
+import { Search } from 'lucide-react';
 
 export default function DetectionTable({ onSelectDetection }) {
   const [searchTerm, setSearchTerm] = useState('');

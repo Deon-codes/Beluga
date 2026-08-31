@@ -3,38 +3,13 @@ import { createContext, useState, useContext, useEffect, createElement } from 'r
 const ThemeContext = createContext(null);
 
 export function ThemeProvider({ children }) {
-  const [isDark, setIsDark] = useState(() => {
-    try {
-      const saved = localStorage.getItem('theme-mode');
-      if (saved) {
-        return saved === 'dark';
-      }
-    } catch (error) {
-      // Ignore localStorage access failures in restricted environments.
-    }
-
-    if (typeof window !== 'undefined' && window.matchMedia) {
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
-
-    return false;
-  });
+  const [isDark] = useState(true);
 
   useEffect(() => {
-    try {
-      localStorage.setItem('theme-mode', isDark ? 'dark' : 'light');
-    } catch (error) {
-      // Ignore write failures.
-    }
+    document.documentElement.classList.add('dark');
+  }, []);
 
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [isDark]);
-
-  const toggleTheme = () => setIsDark((value) => !value);
+  const toggleTheme = () => {};
 
   return createElement(
     ThemeContext.Provider,

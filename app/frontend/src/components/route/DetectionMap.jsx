@@ -42,17 +42,14 @@ export default function DetectionMap({ activeCandidateRoute, isOptimizing, isCom
   };
 
   return (
-    <div className="relative w-full h-[360px] sm:h-[440px] md:h-[520px] rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-xl">
+    <div className="relative h-[360px] w-full overflow-hidden rounded-xl border border-cyan-400/15 shadow-xl sm:h-[440px] md:h-[620px]">
       <MapContainer
         center={[centerLat, centerLng]}
         zoom={13}
         scrollWheelZoom={true}
-        className="w-full h-full"
+        className="h-full w-full"
       >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
+        <TileLayer url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" />
 
         {/* Start Position Marker */}
         <Marker position={[vesselStartLocation.lat, vesselStartLocation.lng]} icon={shipIcon}>
@@ -151,25 +148,13 @@ export default function DetectionMap({ activeCandidateRoute, isOptimizing, isCom
       </MapContainer>
 
       {/* Map Legend Overlay */}
-      <div className="absolute top-2.5 right-2.5 sm:top-4 sm:right-4 z-[1000] bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-2 sm:p-3 rounded-xl border border-slate-200 dark:border-slate-800 shadow-lg text-[10px] sm:text-xs space-y-1.5 sm:space-y-2 max-w-[140px] sm:max-w-none">
-        <div className="font-semibold text-slate-800 dark:text-slate-200 border-b border-slate-200 dark:border-slate-700 pb-1">
-          Debris Priority
-        </div>
-        <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
-          <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-red-500 shadow-sm inline-block shrink-0"></span>
-          <span>High Priority</span>
-        </div>
-        <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
-          <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-amber-500 shadow-sm inline-block shrink-0"></span>
-          <span>Med Priority</span>
-        </div>
-        <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
-          <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-emerald-500 shadow-sm inline-block shrink-0"></span>
-          <span>Low Priority</span>
-        </div>
-        <div className="pt-1 border-t border-slate-200 dark:border-slate-700 flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
-          <span className="w-3 h-1 bg-cyan-400 inline-block rounded-full shrink-0"></span>
-          <span>Eco Route</span>
+      <div className="absolute right-3 top-3 z-[1000] max-w-[160px] space-y-2 rounded-xl border border-cyan-400/20 bg-[#0d1b2a]/90 p-3 text-xs backdrop-blur">
+        <div className="border-b border-cyan-400/15 pb-1 font-semibold">Debris Priority</div>
+        <div className="flex items-center gap-1.5 text-slate-300"><span className="inline-block h-2.5 w-2.5 rounded-full bg-red-500" /> High Priority</div>
+        <div className="flex items-center gap-1.5 text-slate-300"><span className="inline-block h-2.5 w-2.5 rounded-full bg-amber-500" /> Med Priority</div>
+        <div className="flex items-center gap-1.5 text-slate-300"><span className="inline-block h-2.5 w-2.5 rounded-full bg-emerald-500" /> Low Priority</div>
+        <div className="flex items-center gap-1.5 border-t border-cyan-400/15 pt-1 text-slate-300">
+          <span className="inline-block h-1 w-4 rounded-full bg-cyan-400" /> Eco Route
         </div>
       </div>
     </div>

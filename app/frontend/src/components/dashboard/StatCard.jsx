@@ -1,30 +1,41 @@
 import { TrendingUp, Target, AlertTriangle, Zap } from 'lucide-react';
-import { dashboardStats } from '../../data/mockData';
 
 const iconMap = {
-  TrendingUp: TrendingUp,
-  Target: Target,
-  AlertTriangle: AlertTriangle,
-  Zap: Zap,
+  TrendingUp,
+  Target,
+  AlertTriangle,
+  Zap,
+};
+
+const accentStyles = {
+  cyan: 'text-cyan-300 bg-cyan-400/10 shadow-[0_0_16px_rgba(0,210,255,0.25)]',
+  red: 'text-red-400 bg-red-500/10 shadow-[0_0_16px_rgba(239,68,68,0.25)]',
+  amber: 'text-amber-300 bg-amber-500/10 shadow-[0_0_16px_rgba(245,158,11,0.25)]',
 };
 
 export default function StatCard({ stat }) {
   const Icon = iconMap[stat.icon];
+  const tone =
+    stat.changeTone === 'danger'
+      ? 'text-red-400'
+      : stat.changeTone === 'positive'
+        ? 'text-cyan-300'
+        : stat.changeTone === 'live'
+          ? 'text-amber-300'
+          : 'text-slate-400';
 
   return (
-    <div className="card rounded-2xl p-6 shadow-sm transition-all duration-200 hover:shadow-md">
-      <div className="mb-4 flex items-start justify-between">
+    <div className="glass-panel rounded-xl p-4">
+      <div className="flex items-start justify-between">
         <div>
-          <p className="mb-1 text-sm font-medium text-slate-500 dark:text-slate-300">
-            {stat.title}
-          </p>
-          <p className="text-3xl font-bold text-slate-900 dark:text-white">{stat.value}</p>
+          <p className="text-3xl font-bold tracking-tight">{stat.value}</p>
+          <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-400">{stat.title}</p>
+          <p className={`mt-1 text-xs ${tone}`}>{stat.change}</p>
         </div>
-        <div className="rounded-xl bg-blue-50 p-3 text-blue-600 dark:bg-sky-500/10 dark:text-cyan-300">
-          <Icon size={24} />
+        <div className={`rounded-full p-2 ${accentStyles[stat.accent] || accentStyles.cyan}`}>
+          {Icon ? <Icon size={18} /> : null}
         </div>
       </div>
-      <p className="text-xs text-slate-500 dark:text-slate-300">{stat.change}</p>
     </div>
   );
 }

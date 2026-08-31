@@ -2,12 +2,12 @@ import SurveyTable from '../components/surveys/SurveyTable';
 
 export default function SurveyHistory() {
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6 p-6">
       <div>
-        <h1 className="text-4xl font-bold text-light-text dark:text-dark-text mb-2">
+        <h1 className="mb-2 text-4xl font-bold">
           Survey History
         </h1>
-        <p className="text-light-text-secondary dark:text-dark-text-secondary">
+        <p className="text-slate-400">
           View all processed and ongoing surveys
         </p>
       </div>

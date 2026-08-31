@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { surveys } from '../../data/mockData';
-import { Search, ChevronDown } from 'lucide-react';
+import { Search } from 'lucide-react';
 
 export default function SurveyTable() {
   const [searchTerm, setSearchTerm] = useState('');

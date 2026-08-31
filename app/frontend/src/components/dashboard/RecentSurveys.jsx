@@ -1,62 +1,43 @@
+import { Link } from 'react-router-dom';
 import { surveys } from '../../data/mockData';
 import { CheckCircle, Loader } from 'lucide-react';
 
 export default function RecentSurveys() {
-  const recentSurveys = surveys.slice(0, 4);
-
-  const getStatusIcon = (status) => {
-    if (status === 'Processed') {
-      return <CheckCircle size={16} className="text-green-500" />;
-    }
-    return <Loader size={16} className="text-blue-500 animate-spin" />;
-  };
-
   return (
-    <div className="card h-full rounded-2xl p-5">
-      <h3 className="mb-4 text-lg font-semibold text-slate-900 dark:text-white">Recent Surveys</h3>
+    <div className="glass-panel flex-1 rounded-xl p-4">
+      <div className="mb-3 flex items-center justify-between">
+        <h3 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">Recent Surveys</h3>
+        <Link to="/history" className="text-[10px] font-semibold tracking-wide text-cyan-300">VIEW ALL</Link>
+      </div>
       <div className="space-y-3">
-        {recentSurveys.map((survey) => (
-          <div
-            key={survey.id}
-            className="cursor-pointer rounded-xl border border-slate-200 bg-slate-50 p-3 transition-colors hover:border-sky-200 hover:bg-sky-50 dark:border-slate-700 dark:bg-slate-800/80 dark:hover:border-sky-500/40 dark:hover:bg-slate-800"
-          >
-            <div className="mb-2 flex items-start justify-between gap-3">
-              <div className="flex-1">
-                <p className="font-medium text-slate-900 transition-colors group-hover:text-sky-600 dark:text-slate-100 dark:group-hover:text-cyan-300">
-                  {survey.id}
-                </p>
-                <p className="text-sm text-slate-600 dark:text-slate-300">
-                  {survey.location}
-                </p>
+        {surveys.slice(0, 2).map((survey) => (
+          <div key={survey.id} className="rounded-lg border border-cyan-400/10 bg-black/20 p-3">
+            <div className="mb-2 flex items-start justify-between gap-2">
+              <div>
+                <p className="text-sm font-semibold">{survey.id} {survey.location}</p>
               </div>
+              <div className="flex items-center gap-1 text-[11px] text-slate-300">
+                {survey.status === 'Processed' ? (
+                  <CheckCircle size={14} className="text-emerald-400" />
+                ) : (
+                  <Loader size={14} className="animate-spin text-cyan-300" />
+                )}
+                {survey.status}
+              </div>
+            </div>
+            {survey.status === 'Processed' ? (
+              <p className="text-[11px] text-slate-400">{survey.detections} objects detected</p>
+            ) : (
               <div className="flex items-center gap-2">
-                {getStatusIcon(survey.status)}
-                <span className="text-[10px] text-slate-500 dark:text-slate-300">
-                  {survey.status}
-                </span>
-              </div>
-            </div>
-            <div className="text-xs text-slate-500 dark:text-slate-300">
-              {survey.status === 'Processed' ? (
-                <span>{survey.detections} objects detected</span>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
-                    <div
-                      className="h-full bg-gradient-to-r from-sky-500 to-cyan-400"
-                      style={{ width: `${survey.progress}%` }}
-                    ></div>
-                  </div>
-                  <span>{survey.progress}%</span>
+                <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-800">
+                  <div className="h-full bg-[#00d1c1]" style={{ width: `${survey.progress}%` }} />
                 </div>
-              )}
-            </div>
+                <span className="text-[11px] text-slate-400">{survey.progress}%</span>
+              </div>
+            )}
           </div>
         ))}
       </div>
-      <button className="mt-4 w-full rounded-lg py-2 text-sm font-medium text-sky-700 transition-colors hover:bg-sky-50 dark:text-cyan-300 dark:hover:bg-slate-800">
-        View All Surveys →
-      </button>
     </div>
   );
 }

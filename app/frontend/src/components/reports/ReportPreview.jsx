@@ -1,4 +1,4 @@
-import { X, Printer, Download, Shield, Navigation, Leaf, CheckCircle2, AlertTriangle, FileText } from 'lucide-react';
+import { X, Printer, Download, Shield, Navigation, Leaf, CheckCircle2, FileText } from 'lucide-react';
 import { surveys, detections } from '../../data/mockData';
 import { getRouteOptimizationSummary, candidateRoutes } from '../../data/routeMockData';
 
@@ -182,7 +182,7 @@ export default function ReportPreview({ report, onClose }) {
                       <td className="p-3 font-mono font-bold text-cyan-600 dark:text-cyan-400">{d.id}</td>
                       <td className="p-3">{d.classification}</td>
                       <td className="p-3 font-mono font-bold text-slate-900 dark:text-slate-100">
-                        {d.confidence}%
+                        {(d.confidence > 1 ? d.confidence : d.confidence * 100).toFixed(1)}%
                       </td>
                       <td className="p-3">
                         <span

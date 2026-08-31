@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Upload, File, CheckCircle2, X, AlertCircle } from 'lucide-react';
+import { Upload, File, CheckCircle2, X } from 'lucide-react';
 
 export default function UploadBox({ onUploadComplete }) {
   const [dragActive, setDragActive] = useState(false);

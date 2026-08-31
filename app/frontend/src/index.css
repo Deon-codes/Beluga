@@ -3,40 +3,29 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-light-surface: #f8fafc;
-  --color-light-border: #e2e8f0;
-  --color-light-text: #0f172a;
-  --color-light-text-secondary: #475569;
-
-  --color-dark-bg: #020817;
-  --color-dark-card: #0f172a;
-  --color-dark-surface: #111827;
-  --color-dark-border: #1e293b;
-  --color-dark-text: #e2e8f0;
-  --color-dark-text-secondary: #94a3b8;
-
-  --color-ocean-blue: #0ea5e9;
-  --color-cyan: #22d3ee;
+  --color-light-surface: #0d1b2a;
+  --color-light-border: #1c2e45;
+  --color-light-text: #e8f1ff;
+  --color-light-text-secondary: #8aa0b8;
+  --color-dark-bg: #050a14;
+  --color-dark-card: #0d1b2a;
+  --color-dark-surface: #0a1624;
+  --color-dark-border: #1c334d;
+  --color-dark-text: #e8f1ff;
+  --color-dark-text-secondary: #8aa0b8;
+  --color-ocean-blue: #00d1c1;
+  --color-cyan: #00d2ff;
   --color-alert-red: #ef4444;
   --color-success-green: #22c55e;
 }
 
 :root {
-  color-scheme: light;
-  --app-bg: #f8fafc;
-  --app-card: #ffffff;
-  --app-text: #0f172a;
-  --app-muted: #475569;
-  --app-border: #e2e8f0;
-}
-
-html.dark {
   color-scheme: dark;
-  --app-bg: #020817;
-  --app-card: #0f172a;
-  --app-text: #e2e8f0;
-  --app-muted: #94a3b8;
-  --app-border: #1e293b;
+  --app-bg: #050a14;
+  --app-card: rgba(13, 27, 42, 0.78);
+  --app-text: #e8f1ff;
+  --app-muted: #8aa0b8;
+  --app-border: rgba(0, 210, 255, 0.16);
 }
 
 html, body, #root {
@@ -46,62 +35,92 @@ html, body, #root {
 
 body {
   margin: 0;
-  background: var(--app-bg);
+  background:
+    radial-gradient(1200px 600px at 20% -10%, rgba(0, 210, 255, 0.08), transparent 50%),
+    radial-gradient(900px 500px at 90% 10%, rgba(0, 209, 193, 0.06), transparent 45%),
+    #050a14;
   color: var(--app-text);
   font-family: Inter, 'Segoe UI', sans-serif;
-  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 * {
   box-sizing: border-box;
 }
 
+.glass-panel,
 .card,
 .panel {
-  background: var(--app-card);
-  border-color: var(--app-border);
+  background: rgba(13, 27, 42, 0.72);
+  border: 1px solid rgba(0, 210, 255, 0.16);
   color: var(--app-text);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 0 0 1px rgba(8, 20, 36, 0.5), 0 18px 40px rgba(0, 0, 0, 0.28);
 }
 
 .card {
-  @apply rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900;
+  @apply rounded-xl;
 }
 
 .btn-primary {
-  @apply rounded-lg bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700;
+  @apply rounded-lg bg-[#00d1c1] px-4 py-2 font-semibold text-slate-950 transition hover:bg-[#22e3d4];
+}
+
+.btn-secondary {
+  @apply rounded-lg border border-cyan-400/30 bg-transparent px-4 py-2 text-cyan-200 transition hover:bg-cyan-400/10;
+}
+
+.input {
+  @apply w-full rounded-lg border border-cyan-400/20 bg-[#07111c] px-3 py-2 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-cyan-400/60;
 }
 
 .badge-high {
-  @apply rounded-full bg-red-100 px-2 py-1 text-xs font-semibold text-red-700;
+  @apply rounded-full bg-red-500/15 px-2 py-0.5 text-[10px] font-bold tracking-wide text-red-400;
 }
 
 .badge-medium {
-  @apply rounded-full bg-orange-100 px-2 py-1 text-xs font-semibold text-orange-700;
+  @apply rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-bold tracking-wide text-amber-400;
 }
 
 .badge-low {
-  @apply rounded-full bg-green-100 px-2 py-1 text-xs font-semibold text-green-700;
+  @apply rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold tracking-wide text-emerald-400;
+}
+
+.table {
+  @apply w-full text-left text-sm;
+}
+
+.table-header {
+  @apply text-[11px] uppercase tracking-[0.16em] text-slate-400;
+}
+
+.table-header th {
+  @apply px-3 py-3 font-semibold;
+}
+
+.table-body td {
+  @apply border-t border-cyan-400/10 px-3 py-3 text-slate-200;
+}
+
+.table-body tr:hover {
+  background: rgba(0, 210, 255, 0.06);
 }
 
 .leaflet-container {
   width: 100%;
   height: 100%;
-  background: #e2e8f0;
+  background: #071018;
 }
 
 .leaflet-popup-content-wrapper,
 .leaflet-popup-tip {
-  background: rgba(255, 255, 255, 0.98);
+  background: rgba(13, 27, 42, 0.96);
+  color: #e8f1ff;
 }
 
-html.dark .leaflet-container {
-  background: #0f172a;
-}
-
-html.dark .leaflet-popup-content-wrapper,
-html.dark .leaflet-popup-tip {
-  background: rgba(15, 23, 42, 0.96);
-  color: #e2e8f0;
+.leaflet-control-zoom a {
+  background: #0d1b2a !important;
+  color: #e8f1ff !important;
+  border-color: rgba(0, 210, 255, 0.2) !important;
 }
 
 ::-webkit-scrollbar {
@@ -110,14 +129,19 @@ html.dark .leaflet-popup-tip {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #1c334d;
   border-radius: 9999px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
 }
 
 html {
   scroll-behavior: smooth;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6); }
+  50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+}
+
+.live-dot {
+  animation: pulse-dot 1.6s ease-in-out infinite;
 }

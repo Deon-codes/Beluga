@@ -42,14 +42,13 @@ export default function NewSurvey() {
   }, [viewMode]);
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-6 p-6">
+      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="text-3xl font-bold text-light-text dark:text-dark-text mb-1">
+          <h1 className="mb-1 text-3xl font-bold">
             New Marine Survey & Route Optimization
           </h1>
-          <p className="text-light-text-secondary dark:text-dark-text-secondary">
+          <p className="text-slate-400">
             {viewMode === 'form' && 'Create and upload sonar survey data for AI detection and eco-route planning'}
             {viewMode === 'processing' && 'AI Model analyzing sonar scan and extracting coordinate metadata...'}
             {viewMode === 'optimizer' && 'Eco-Optimized Cleanup Route trajectory analysis'}
@@ -71,13 +70,13 @@ export default function NewSurvey() {
         <>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Survey Information Form */}
-            <div className="card p-6">
-              <h2 className="text-xl font-semibold text-light-text dark:text-dark-text mb-6">
+            <div className="glass-panel rounded-xl p-6">
+              <h2 className="mb-6 text-xl font-semibold">
                 Survey Information
               </h2>
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div>
-                  <label className="block text-sm font-medium text-light-text dark:text-dark-text mb-2">
+                  <label className="mb-2 block text-sm font-medium text-slate-300">
                     Survey Name
                   </label>
                   <input
@@ -90,7 +89,7 @@ export default function NewSurvey() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-light-text dark:text-dark-text mb-2">
+                  <label className="mb-2 block text-sm font-medium text-slate-300">
                     Survey Location
                   </label>
                   <input
@@ -103,7 +102,7 @@ export default function NewSurvey() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-light-text dark:text-dark-text mb-2">
+                  <label className="mb-2 block text-sm font-medium text-slate-300">
                     Survey Date
                   </label>
                   <input
@@ -119,7 +118,7 @@ export default function NewSurvey() {
 
             {/* File Upload */}
             <div>
-              <h2 className="text-xl font-semibold text-light-text dark:text-dark-text mb-6">
+              <h2 className="mb-6 text-xl font-semibold">
                 Upload Sonar Data
               </h2>
               <UploadBox />
@@ -140,27 +139,27 @@ export default function NewSurvey() {
 
       {/* VIEW 2: AI PROCESSING ANIMATION */}
       {viewMode === 'processing' && (
-        <div className="card p-12 text-center max-w-xl mx-auto space-y-6">
-          <div className="w-16 h-16 mx-auto rounded-full bg-ocean-blue/10 dark:bg-cyan/10 flex items-center justify-center text-ocean-blue dark:text-cyan">
+        <div className="glass-panel mx-auto max-w-xl space-y-6 rounded-xl p-12 text-center">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-cyan-400/10 text-cyan-300">
             <Loader2 className="animate-spin" size={36} />
           </div>
 
           <div>
-            <h2 className="text-2xl font-bold text-light-text dark:text-dark-text">
+            <h2 className="text-2xl font-bold">
               Analyzing Sonar Data...
             </h2>
-            <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary mt-1">
+            <p className="mt-1 text-sm text-slate-400">
               Running deep neural network object detection on uploaded sonar imagery.
             </p>
           </div>
 
           {/* Progress Bar */}
           <div className="space-y-2">
-            <div className="flex justify-between text-xs font-semibold text-light-text dark:text-dark-text">
+            <div className="flex justify-between text-xs font-semibold">
               <span>AI Detection Progress</span>
               <span>{processingProgress}%</span>
             </div>
-            <div className="w-full bg-light-border dark:bg-dark-border h-3 rounded-full overflow-hidden">
+            <div className="h-3 w-full overflow-hidden rounded-full bg-slate-800">
               <div
                 className="bg-gradient-to-r from-ocean-blue to-cyan h-full transition-all duration-300"
                 style={{ width: `${processingProgress}%` }}
@@ -169,7 +168,7 @@ export default function NewSurvey() {
           </div>
 
           {/* Pipeline Step Checkmarks */}
-          <div className="text-left text-xs space-y-2 pt-4 border-t border-light-border dark:border-dark-border">
+          <div className="space-y-2 border-t border-cyan-400/10 pt-4 text-left text-xs">
             <div className={`flex items-center gap-2 ${processingProgress >= 25 ? 'text-emerald-500 font-semibold' : 'text-slate-400'}`}>
               <CheckCircle2 size={16} /> Sonar file validation & decompression completed
             </div>

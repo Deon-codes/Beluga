@@ -1,52 +1,46 @@
+import { useNavigate } from 'react-router-dom';
+import { Eye, Send } from 'lucide-react';
 import { dashboardStats } from '../data/mockData';
 import StatCard from '../components/dashboard/StatCard';
 import IndiaMap from '../components/dashboard/IndiaMap';
 import RecentDetections from '../components/dashboard/RecentDetections';
 import RecentSurveys from '../components/dashboard/RecentSurveys';
+import ThreatGauge from '../components/dashboard/ThreatGauge';
 
 export default function Dashboard() {
+  const navigate = useNavigate();
+
   return (
-    <div className="space-y-6 p-6 md:p-8">
-      <div className="overflow-hidden rounded-[28px] border border-sky-100 bg-gradient-to-r from-sky-100 via-white to-cyan-50 p-5 shadow-[0_20px_45px_rgba(14,116,144,0.08)] dark:border-slate-700 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950">
-        <div className="mb-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-sky-600 dark:text-sky-300">
-              Coastal Intelligence
-            </p>
-            <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white md:text-4xl">
-              Dashboard
-            </h1>
-            <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
-              Marine Survey Intelligence Overview
-            </p>
+    <div className="grid min-h-[calc(100vh-64px)] grid-cols-1 gap-4 p-4 xl:grid-cols-[260px_minmax(0,1fr)_300px]">
+      <aside className="flex flex-col gap-3">
+        <div className="glass-panel rounded-xl p-4">
+          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400">Survey Info</p>
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between"><span className="text-slate-400">Active Area</span><span>Indian Ocean</span></div>
+            <div className="flex justify-between"><span className="text-slate-400">Vessels</span><span className="text-emerald-400">2 Active</span></div>
+            <div className="flex justify-between"><span className="text-slate-400">Coverage</span><span className="text-cyan-300">78.4%</span></div>
           </div>
-          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-700 shadow-sm shadow-emerald-200/40 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300">
-            <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
-            Live Monitoring
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            <button className="btn-secondary flex items-center justify-center gap-1 px-2 py-1.5 text-[11px]">
+              <Eye size={12} /> Track Vessels
+            </button>
+            <button onClick={() => navigate('/new-survey')} className="btn-secondary flex items-center justify-center gap-1 px-2 py-1.5 text-[11px]">
+              <Send size={12} /> Route Plan
+            </button>
           </div>
         </div>
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {dashboardStats.map((stat) => (
           <StatCard key={stat.id} stat={stat} />
         ))}
-      </div>
+      </aside>
 
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,2.3fr)_380px]">
-        <div className="overflow-hidden rounded-[30px] border border-slate-200 bg-white shadow-[0_24px_60px_rgba(15,23,42,0.08)] dark:border-slate-700 dark:bg-slate-900">
-          <IndiaMap />
-        </div>
+      <IndiaMap />
 
-        <div className="flex flex-col gap-6">
-          <div className="h-[290px] overflow-hidden">
-            <RecentDetections />
-          </div>
-          <div className="h-[290px] overflow-hidden">
-            <RecentSurveys />
-          </div>
-        </div>
-      </div>
+      <aside className="flex flex-col gap-3">
+        <ThreatGauge />
+        <RecentDetections />
+        <RecentSurveys />
+      </aside>
     </div>
   );
 }

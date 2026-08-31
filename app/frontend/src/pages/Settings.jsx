@@ -1,33 +1,33 @@
 export default function Settings() {
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6 p-6">
       <div>
-        <h1 className="text-4xl font-bold text-light-text dark:text-dark-text mb-2">
+        <h1 className="mb-2 text-4xl font-bold">
           Settings
         </h1>
-        <p className="text-light-text-secondary dark:text-dark-text-secondary">
+        <p className="text-slate-400">
           Configure application preferences
         </p>
       </div>
 
-      <div className="card p-6 max-w-2xl">
-        <h2 className="text-xl font-semibold text-light-text dark:text-dark-text mb-4">
+      <div className="glass-panel max-w-2xl rounded-xl p-6">
+        <h2 className="mb-4 text-xl font-semibold">
           Application Settings
         </h2>
         <div className="space-y-4">
-          <div className="p-4 rounded-lg bg-light-surface dark:bg-dark-surface">
-            <p className="font-medium text-light-text dark:text-dark-text mb-2">
+          <div className="rounded-lg bg-black/20 p-4">
+            <p className="mb-2 font-medium">
               Theme
             </p>
-            <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
-              Toggle between light and dark mode using the button in the top navigation
+            <p className="text-sm text-slate-400">
+              Command display is locked to the SONAR-AI night operations theme.
             </p>
           </div>
-          <div className="p-4 rounded-lg bg-light-surface dark:bg-dark-surface">
-            <p className="font-medium text-light-text dark:text-dark-text mb-2">
+          <div className="rounded-lg bg-black/20 p-4">
+            <p className="mb-2 font-medium">
               Notifications
             </p>
-            <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
+            <p className="text-sm text-slate-400">
               More settings coming soon
             </p>
           </div>
