@@ -188,17 +188,11 @@ export async function triggerAnalysis(surveyId: string) {
 }
 
 export async function getSurveyStatus(surveyId: string): Promise<BackendJobStatus> {
-  try {
-    const res = await fetch(`${API_BASE}/survey/${surveyId}/status`);
-    if (res.ok) {
-      const data: BackendJobStatus = await res.json();
-      return data;
-    }
-    throw new Error('Failed to get status');
-  } catch (err) {
-    console.error('Backend status failed:', err);
-    throw err;
+  const res = await fetch(`${API_BASE}/survey/${surveyId}/status`);
+  if (!res.ok) {
+    throw new Error(`Failed to get status (HTTP ${res.status})`);
   }
+  return await res.json();
 }
 
 export async function getSurveyDetections(

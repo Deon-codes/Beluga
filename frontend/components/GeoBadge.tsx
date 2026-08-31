@@ -24,21 +24,21 @@ export function GeoBadge({ lat, lon, confidence, compact = false, className = ''
 
   return (
     <div
-      className={`inline-flex items-center gap-2 font-mono text-xs border rounded-xs px-2 py-1 ${
+      className={`inline-flex items-center gap-2  text-xs border rounded-xl px-2 py-1 ${
         isMeasured
-          ? 'bg-[#071a2e] border-cyan-500/50 text-cyan-200'
+          ? 'bg-[#071a2e] border-blue-500/50 text-cyan-200'
           : 'bg-[#1f1708] border-amber-500/50 text-amber-200'
       } ${className}`}
     >
       <div className="flex items-center gap-1 shrink-0 font-medium">
         {isMeasured ? (
-          <Crosshair className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+          <Crosshair className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 animate-pulse" />
         ) : (
-          <Navigation className="w-3.5 h-3.5 text-amber-400" />
+          <Navigation className="w-3.5 h-3.5 text-amber-600 dark:text-amber-600 dark:text-amber-400" />
         )}
         <span
-          className={`text-[10px] font-bold tracking-wider px-1 py-0.5 rounded-xs uppercase ${
-            isMeasured ? 'bg-cyan-950 text-cyan-400 border border-cyan-800' : 'bg-amber-950 text-amber-400 border border-amber-800'
+          className={`text-[10px] font-bold tracking-wider px-1 py-0.5 rounded-xl uppercase ${
+            isMeasured ? 'bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800' : 'bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20'
           }`}
         >
           {isMeasured ? 'MEASURED GPS' : 'ESTIMATED ANCHOR'}
@@ -47,8 +47,8 @@ export function GeoBadge({ lat, lon, confidence, compact = false, className = ''
 
       {!compact && <span className="text-slate-500">|</span>}
 
-      <div className="flex items-center gap-1.5 font-mono font-medium tracking-tight text-slate-100">
-        <MapPin className="w-3 h-3 text-slate-400" />
+      <div className="flex items-center gap-1.5  font-medium tracking-tight text-slate-900 dark:text-slate-900 dark:text-slate-100">
+        <MapPin className="w-3 h-3 text-slate-500 dark:text-slate-500 dark:text-slate-400" />
         <span>{formattedLat}</span>
         <span className="text-slate-500">,</span>
         <span>{formattedLon}</span>

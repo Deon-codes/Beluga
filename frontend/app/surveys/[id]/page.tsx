@@ -199,9 +199,9 @@ export default function SurveyEvaluatorPage({ params }: SurveyEvaluatorProps) {
 
   if (loading && !survey) {
     return (
-      <div className="flex flex-col items-center justify-center h-full space-y-3 font-mono">
+      <div className="flex flex-col items-center justify-center h-full space-y-3 ">
         <div className="w-8 h-8 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin" />
-        <div className="text-xs text-cyan-300 font-bold uppercase tracking-wider">
+        <div className="text-xs text-blue-500 dark:text-blue-300 font-bold uppercase tracking-wider">
           LOADING HYDROGRAPHIC WATERFALL WORKSTATION...
         </div>
       </div>
@@ -252,28 +252,28 @@ export default function SurveyEvaluatorPage({ params }: SurveyEvaluatorProps) {
     : null;
 
   return (
-    <div className="flex flex-col h-full overflow-hidden font-mono select-none">
+    <div className="flex flex-col h-full overflow-hidden  select-none">
       {/* Top Survey Header Strip */}
-      <div className="h-10 px-4 bg-[#070e20] border-b border-[#1e293b] flex items-center justify-between text-xs shrink-0">
+      <div className="h-10 px-4 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between text-xs shrink-0">
         <div className="flex items-center gap-3 min-w-0">
           <Link
             href="/surveys"
-            className="text-slate-400 hover:text-cyan-300 flex items-center gap-1 text-xs"
+            className="text-slate-500 dark:text-slate-400 hover:text-blue-500 dark:text-blue-300 flex items-center gap-1 text-xs"
           >
             <ChevronLeft className="w-4 h-4" />
             <span className="hidden sm:inline">ALL SURVEYS</span>
           </Link>
           <span className="text-slate-700">|</span>
           <div className="flex items-center gap-2 truncate">
-            <span className="font-bold text-cyan-300 tracking-wider">
+            <span className="font-bold text-blue-500 dark:text-blue-300 tracking-wider">
               {currentSurvey.id}
             </span>
-            <span className="text-slate-300 truncate hidden md:inline">
+            <span className="text-slate-600 dark:text-slate-300 truncate hidden md:inline">
               — {currentSurvey.title}
             </span>
           </div>
           {isPolling && (
-            <span className="flex items-center gap-1 text-cyan-400 text-[10px] font-bold animate-pulse px-1.5 py-0.5 bg-cyan-950/80 border border-cyan-800 rounded-xs">
+            <span className="flex items-center gap-1 text-blue-600 dark:text-blue-400 text-[10px] font-bold animate-pulse px-1.5 py-0.5 bg-blue-50 dark:bg-blue-900/80 border border-blue-200 dark:border-blue-800 rounded-xl">
               <RefreshCw className="w-3 h-3 animate-spin" />
               ANALYZING ({currentSurvey.status})
             </span>
@@ -281,17 +281,17 @@ export default function SurveyEvaluatorPage({ params }: SurveyEvaluatorProps) {
         </div>
 
         <div className="flex items-center gap-3 text-[11px]">
-          <div className="hidden lg:flex items-center gap-2 text-slate-400">
+          <div className="hidden lg:flex items-center gap-2 text-slate-500 dark:text-slate-400">
             <span>
-              VESSEL: <strong className="text-slate-200">{currentSurvey.metadata.vessel_name}</strong>
+              VESSEL: <strong className="text-slate-700 dark:text-slate-200">{currentSurvey.metadata.vessel_name}</strong>
             </span>
             <span className="text-slate-700">|</span>
             <span>
-              ALT: <strong className="text-cyan-300">{currentSurvey.metadata.altitude_m}m</strong>
+              ALT: <strong className="text-blue-500 dark:text-blue-300">{currentSurvey.metadata.altitude_m}m</strong>
             </span>
             <span className="text-slate-700">|</span>
             <span>
-              RES: <strong className="text-cyan-300">{currentSurvey.metadata.resolution_m_px}m/px</strong>
+              RES: <strong className="text-blue-500 dark:text-blue-300">{currentSurvey.metadata.resolution_m_px}m/px</strong>
             </span>
           </div>
 
@@ -299,19 +299,19 @@ export default function SurveyEvaluatorPage({ params }: SurveyEvaluatorProps) {
             <a
               href={getReportDownloadUrl(currentSurvey.id, 'json')}
               download={`report_${currentSurvey.id}.json`}
-              className="flex items-center gap-1 px-2 py-1 bg-[#111d38] hover:bg-slate-800 border border-slate-700 hover:border-cyan-600 rounded-xs text-slate-200 transition-colors"
+              className="flex items-center gap-1 px-2 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-800 border border-slate-700 hover:border-cyan-600 rounded-xl text-slate-700 dark:text-slate-200 transition-colors"
               title="Download Raw JSON Hydrographic Report"
             >
-              <FileText className="w-3.5 h-3.5 text-cyan-400" />
+              <FileText className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
               <span className="hidden sm:inline">JSON</span>
             </a>
             <a
               href={getReportDownloadUrl(currentSurvey.id, 'csv')}
               download={`report_${currentSurvey.id}.csv`}
-              className="flex items-center gap-1 px-2 py-1 bg-[#111d38] hover:bg-slate-800 border border-slate-700 hover:border-cyan-600 rounded-xs text-slate-200 transition-colors"
+              className="flex items-center gap-1 px-2 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-800 border border-slate-700 hover:border-cyan-600 rounded-xl text-slate-700 dark:text-slate-200 transition-colors"
               title="Download Hydrographic CSV Matrix"
             >
-              <Download className="w-3.5 h-3.5 text-emerald-400" />
+              <Download className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span className="hidden sm:inline">CSV</span>
             </a>
           </div>
@@ -341,9 +341,9 @@ export default function SurveyEvaluatorPage({ params }: SurveyEvaluatorProps) {
           />
 
           {/* Bottom Quick Anomaly Strip */}
-          <div className="h-12 bg-[#0b1329]/95 border-t border-[#1e293b] flex items-center px-3 gap-2 overflow-x-auto shrink-0 z-10">
-            <span className="text-[10px] text-slate-400 uppercase font-bold shrink-0 flex items-center gap-1">
-              <Crosshair className="w-3 h-3 text-cyan-400" />
+          <div className="h-12 bg-white dark:bg-zinc-900/95 border-t border-slate-200 dark:border-zinc-800 flex items-center px-3 gap-2 overflow-x-auto shrink-0 z-10">
+            <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold shrink-0 flex items-center gap-1">
+              <Crosshair className="w-3 h-3 text-blue-600 dark:text-blue-400" />
               TARGETS ({detections.length}):
             </span>
             {detections.length === 0 && (
@@ -358,12 +358,12 @@ export default function SurveyEvaluatorPage({ params }: SurveyEvaluatorProps) {
                 <button
                   key={det.id}
                   onClick={() => handleSelectAnomaly(det)}
-                  className={`px-2 py-1 text-[11px] font-mono rounded-xs border flex items-center gap-1.5 shrink-0 transition-colors ${
+                  className={`px-2 py-1 text-[11px]  rounded-xl border flex items-center gap-1.5 shrink-0 transition-colors ${
                     isSel
-                      ? 'bg-cyan-950 text-cyan-200 border-cyan-400 ring-1 ring-cyan-400 font-bold'
+                      ? 'bg-blue-50 dark:bg-blue-900 text-cyan-200 border-cyan-400 ring-1 ring-cyan-400 font-bold'
                       : isCrit
                       ? 'bg-red-950/40 text-red-300 border-red-900/60 hover:border-red-500'
-                      : 'bg-[#070e20] text-slate-400 border-slate-800 hover:border-slate-600'
+                      : 'bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-zinc-800 hover:border-slate-600'
                   }`}
                 >
                   <span className={`w-1.5 h-1.5 rounded-full ${isCrit ? 'bg-red-400 animate-pulse' : 'bg-cyan-400'}`} />
@@ -376,11 +376,11 @@ export default function SurveyEvaluatorPage({ params }: SurveyEvaluatorProps) {
         </div>
 
         {/* RIGHT PANE: HYDROGRAPHIC INSPECTOR (~30%) */}
-        <div className="w-full lg:w-[410px] bg-[#0b1329] border-t lg:border-t-0 lg:border-l border-[#1e293b] flex flex-col h-[45vh] lg:h-full overflow-y-auto shrink-0 divide-y divide-[#1e293b]">
+        <div className="w-full lg:w-[410px] bg-white dark:bg-zinc-900 border-t lg:border-t-0 lg:border-l border-slate-200 dark:border-zinc-800 flex flex-col h-[45vh] lg:h-full overflow-y-auto shrink-0 divide-y divide-[#1e293b]">
           {/* Action notification toast if triggered */}
           {actionSuccessMsg && (
-            <div className="p-2.5 bg-cyan-950 border-b border-cyan-500 text-cyan-300 text-xs flex items-center gap-2 animate-pulse">
-              <Sparkles className="w-4 h-4 text-cyan-400" />
+            <div className="p-2.5 bg-blue-50 dark:bg-blue-900 border-b border-blue-500 text-blue-500 dark:text-blue-300 text-xs flex items-center gap-2 animate-pulse">
+              <Sparkles className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               <span>{actionSuccessMsg}</span>
             </div>
           )}
@@ -395,22 +395,22 @@ export default function SurveyEvaluatorPage({ params }: SurveyEvaluatorProps) {
             <div className="p-4 space-y-4 text-xs">
               {/* Header: Class + ID + Risk Badge with Left Color Accent */}
               <div
-                className={`p-3 rounded-xs border-l-2 space-y-2 ${
+                className={`p-3 rounded-xl border-l-2 space-y-2 ${
                   selectedAnomaly.risk === 'CRITICAL'
-                    ? 'bg-[#111d38] border-l-red-500'
+                    ? 'bg-slate-100 dark:bg-slate-700 border-l-red-500'
                     : selectedAnomaly.risk === 'HIGH'
-                    ? 'bg-[#111d38] border-l-orange-500'
+                    ? 'bg-slate-100 dark:bg-slate-700 border-l-orange-500'
                     : selectedAnomaly.risk === 'MEDIUM'
-                    ? 'bg-[#111d38] border-l-amber-500'
-                    : 'bg-[#111d38] border-l-emerald-500'
+                    ? 'bg-slate-100 dark:bg-slate-700 border-l-amber-500'
+                    : 'bg-slate-100 dark:bg-slate-700 border-l-emerald-500'
                 }`}
               >
-                <div className="flex items-center justify-between text-slate-400 text-[10px]">
-                  <span className="flex items-center gap-1 uppercase font-bold text-cyan-400">
+                <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-[10px]">
+                  <span className="flex items-center gap-1 uppercase font-bold text-blue-600 dark:text-blue-400">
                     <Crosshair className="w-3.5 h-3.5" />
                     TARGET CLASSIFICATION
                   </span>
-                  <span className="font-mono-tabular">PING #{selectedAnomaly.ping_index || 1240}</span>
+                  <span className="">PING #{selectedAnomaly.ping_index || 1240}</span>
                 </div>
 
                 <div>
@@ -420,14 +420,14 @@ export default function SurveyEvaluatorPage({ params }: SurveyEvaluatorProps) {
                     </h2>
                     <RiskBadge level={selectedAnomaly.risk} size="sm" />
                   </div>
-                  <div className="text-[11px] text-slate-400 font-mono-tabular">
-                    ID: <span className="text-cyan-300 font-bold">{selectedAnomaly.id}</span> | CLASS #{selectedAnomaly.class_id}
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400 ">
+                    ID: <span className="text-blue-500 dark:text-blue-300 font-bold">{selectedAnomaly.id}</span> | CLASS #{selectedAnomaly.class_id}
                   </div>
                 </div>
               </div>
 
               {/* Confidence Meter Component */}
-              <div className="bg-[#111d38] p-3 rounded-xs border border-[#1e293b] space-y-2">
+              <div className="bg-slate-100 dark:bg-slate-700 p-3 rounded-xl border border-slate-200 dark:border-zinc-800 space-y-2">
                 <ConfidenceMeter
                   confidencePct={selectedAnomaly.confidence_pct}
                   uncertaintyStd={selectedAnomaly.uncertainty_std ?? 0.045}
@@ -436,31 +436,31 @@ export default function SurveyEvaluatorPage({ params }: SurveyEvaluatorProps) {
               </div>
 
               {/* Metric Dimensions Card */}
-              <div className="bg-[#111d38] p-3 rounded-xs border border-[#1e293b] space-y-2.5">
-                <div className="flex items-center justify-between text-[11px] text-slate-400 border-b border-[#1e293b] pb-1.5">
-                  <span className="flex items-center gap-1.5 font-bold text-slate-200 uppercase">
-                    <Ruler className="w-3.5 h-3.5 text-cyan-400" />
+              <div className="bg-slate-100 dark:bg-slate-700 p-3 rounded-xl border border-slate-200 dark:border-zinc-800 space-y-2.5">
+                <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-zinc-800 pb-1.5">
+                  <span className="flex items-center gap-1.5 font-bold text-slate-700 dark:text-slate-200 uppercase">
+                    <Ruler className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
                     ACOUSTIC SIZING & RELIEF
                   </span>
-                  <span className="text-cyan-400 text-[10px] font-bold">WGS84 METRIC</span>
+                  <span className="text-blue-600 dark:text-blue-400 text-[10px] font-bold">WGS84 METRIC</span>
                 </div>
 
                 <div className="grid grid-cols-3 gap-2 text-center">
-                  <div className="bg-[#0b1329] p-2 rounded-xs border border-[#1e293b]">
+                  <div className="bg-white dark:bg-zinc-900 p-2 rounded-xl border border-slate-200 dark:border-zinc-800">
                     <div className="text-[9px] text-slate-500 uppercase mb-1">LENGTH</div>
-                    <div className="text-base font-bold text-white font-mono-tabular leading-none">
+                    <div className="text-base font-bold text-white  leading-none">
                       {selLength.toFixed(1)}m
                     </div>
                   </div>
-                  <div className="bg-[#0b1329] p-2 rounded-xs border border-[#1e293b]">
+                  <div className="bg-white dark:bg-zinc-900 p-2 rounded-xl border border-slate-200 dark:border-zinc-800">
                     <div className="text-[9px] text-slate-500 uppercase mb-1">WIDTH</div>
-                    <div className="text-base font-bold text-white font-mono-tabular leading-none">
+                    <div className="text-base font-bold text-white  leading-none">
                       {selWidth.toFixed(1)}m
                     </div>
                   </div>
-                  <div className="bg-[#0b1329] p-2 rounded-xs border border-cyan-900/60">
-                    <div className="text-[9px] text-cyan-400 font-bold uppercase mb-1">RELIEF (H)</div>
-                    <div className="text-base font-bold text-cyan-300 font-mono-tabular leading-none">
+                  <div className="bg-white dark:bg-zinc-900 p-2 rounded-xl border border-cyan-900/60">
+                    <div className="text-[9px] text-blue-600 dark:text-blue-400 font-bold uppercase mb-1">RELIEF (H)</div>
+                    <div className="text-base font-bold text-blue-500 dark:text-blue-300  leading-none">
                       {selHeight !== null ? `${selHeight.toFixed(1)}m` : 'N/A'}
                     </div>
                   </div>
@@ -468,12 +468,12 @@ export default function SurveyEvaluatorPage({ params }: SurveyEvaluatorProps) {
 
                 {/* Shadow Derivation Formula Tag */}
                 {selectedAnomaly.has_shadow && selectedAnomaly.shadow_vector && (
-                  <div className="p-2.5 bg-[#070e20] border border-cyan-900/80 rounded-xs text-[10px] space-y-1 text-slate-300">
-                    <div className="flex justify-between font-semibold text-cyan-300">
+                  <div className="p-2.5 bg-slate-50 dark:bg-slate-900 border border-cyan-900/80 rounded-xl text-[10px] space-y-1 text-slate-600 dark:text-slate-300">
+                    <div className="flex justify-between font-semibold text-blue-500 dark:text-blue-300">
                       <span>SHADOW TRIGONOMETRY:</span>
                       <span>Ls = {selectedAnomaly.shadow_vector.length_m.toFixed(1)}m</span>
                     </div>
-                    <div className="text-slate-400 font-mono leading-tight">
+                    <div className="text-slate-500 dark:text-slate-400  leading-tight">
                       Ht = (Altitude × Shadow) / (Slant Range + Shadow) ={' '}
                       <strong className="text-cyan-200">
                         {selectedAnomaly.shadow_vector.estimated_height_m.toFixed(2)}m
@@ -484,19 +484,19 @@ export default function SurveyEvaluatorPage({ params }: SurveyEvaluatorProps) {
               </div>
 
               {/* Explainability (Grad-CAM) */}
-              <div className="bg-[#111d38] p-3 rounded-xs border border-[#1e293b] space-y-2">
-                <div className="flex items-center justify-between text-[11px] text-slate-400 border-b border-[#1e293b] pb-1">
-                  <span className="flex items-center gap-1.5 font-bold text-slate-200 uppercase">
-                    <Cpu className="w-3.5 h-3.5 text-cyan-400" />
+              <div className="bg-slate-100 dark:bg-slate-700 p-3 rounded-xl border border-slate-200 dark:border-zinc-800 space-y-2">
+                <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-zinc-800 pb-1">
+                  <span className="flex items-center gap-1.5 font-bold text-slate-700 dark:text-slate-200 uppercase">
+                    <Cpu className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
                     MODEL EXPLAINABILITY
                   </span>
                 </div>
                 {gradcamImage ? (
                   <div className="space-y-2">
                     <img 
-                      src={`data:image/jpeg;base64,${gradcamImage}`} 
+                      src={gradcamImage} 
                       alt="Grad-CAM Explainability" 
-                      className="w-full rounded-xs border border-[#1e293b]"
+                      className="w-full rounded-xl border border-slate-200 dark:border-zinc-800"
                     />
                     <div className="text-[10px] text-slate-500 text-center">Grad-CAM Heatmap overlay (YOLOv8s Neck)</div>
                   </div>
@@ -514,7 +514,7 @@ export default function SurveyEvaluatorPage({ params }: SurveyEvaluatorProps) {
                       }
                     }}
                     disabled={isGeneratingExplain}
-                    className="w-full py-2 bg-transparent hover:bg-slate-800 border border-slate-700 text-cyan-400 font-mono text-[11px] rounded-xs uppercase tracking-wider flex justify-center items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-2 bg-transparent hover:bg-slate-800 border border-slate-700 text-blue-600 dark:text-blue-400  text-[11px] rounded-xl uppercase tracking-wider flex justify-center items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isGeneratingExplain ? (
                       <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> GENERATING...</>
@@ -526,10 +526,10 @@ export default function SurveyEvaluatorPage({ params }: SurveyEvaluatorProps) {
               </div>
 
               {/* Geographic Coordinates & GeoBadge */}
-              <div className="bg-[#111d38] p-3 rounded-xs border border-[#1e293b] space-y-2">
-                <div className="flex items-center justify-between text-[11px] text-slate-400 border-b border-[#1e293b] pb-1">
-                  <span className="flex items-center gap-1.5 font-bold text-slate-200 uppercase">
-                    <Compass className="w-3.5 h-3.5 text-cyan-400" />
+              <div className="bg-slate-100 dark:bg-slate-700 p-3 rounded-xl border border-slate-200 dark:border-zinc-800 space-y-2">
+                <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-zinc-800 pb-1">
+                  <span className="flex items-center gap-1.5 font-bold text-slate-700 dark:text-slate-200 uppercase">
+                    <Compass className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
                     WGS84 COORDINATES & FIX
                   </span>
                   <span className="text-[10px] text-slate-500">6-DECIMAL FIX</span>
@@ -542,13 +542,13 @@ export default function SurveyEvaluatorPage({ params }: SurveyEvaluatorProps) {
                   className="w-full justify-between"
                 />
 
-                <div className="flex justify-between text-[10px] text-slate-400 pt-1">
+                <div className="flex justify-between text-[10px] text-slate-500 dark:text-slate-400 pt-1">
                   <span>
-                    CHANNEL: <strong className="text-slate-200 uppercase">{selectedAnomaly.channel || 'PORT'}</strong>
+                    CHANNEL: <strong className="text-slate-700 dark:text-slate-200 uppercase">{selectedAnomaly.channel || 'PORT'}</strong>
                   </span>
                   <span>
                     SLANT RANGE:{' '}
-                    <strong className="text-cyan-300 font-mono-tabular">
+                    <strong className="text-blue-500 dark:text-blue-300 ">
                       {selectedAnomaly.slant_range_m || 38.4}m
                     </strong>
                   </span>
@@ -557,9 +557,9 @@ export default function SurveyEvaluatorPage({ params }: SurveyEvaluatorProps) {
 
               {/* Operational Notes / Acoustic Description */}
               {selectedAnomaly.notes && (
-                <div className="p-2.5 bg-[#111d38] border border-[#1e293b] rounded-xs text-[11px] text-slate-300 space-y-1">
+                <div className="p-2.5 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-zinc-800 rounded-xl text-[11px] text-slate-600 dark:text-slate-300 space-y-1">
                   <div className="text-[10px] text-slate-500 uppercase font-bold">HYDROGRAPHIC NOTES</div>
-                  <p className="leading-relaxed text-slate-300">{selectedAnomaly.notes}</p>
+                  <p className="leading-relaxed text-slate-600 dark:text-slate-300">{selectedAnomaly.notes}</p>
                 </div>
               )}
 
@@ -568,28 +568,28 @@ export default function SurveyEvaluatorPage({ params }: SurveyEvaluatorProps) {
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     onClick={handleExportAnomaly}
-                    className="py-2 px-2 bg-transparent hover:bg-[#111d38] border border-[#1e293b] hover:border-cyan-600 rounded-xs text-[11px] font-bold text-white uppercase flex items-center justify-center gap-1.5 transition-colors"
+                    className="py-2 px-2 bg-transparent hover:bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-zinc-800 hover:border-cyan-600 rounded-xl text-[11px] font-bold text-white uppercase flex items-center justify-center gap-1.5 transition-colors"
                   >
-                    <Download className="w-3.5 h-3.5 text-cyan-400" />
+                    <Download className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
                     <span>EXPORT DATA</span>
                   </button>
 
                   <button
                     onClick={handleToggleDiverFlag}
-                    className={`py-2 px-2 border rounded-xs text-[11px] font-bold uppercase flex items-center justify-center gap-1.5 transition-colors ${
+                    className={`py-2 px-2 border rounded-xl text-[11px] font-bold uppercase flex items-center justify-center gap-1.5 transition-colors ${
                       diverFlagged
                         ? 'bg-amber-950 border-amber-500 text-amber-300 ring-1 ring-amber-500'
-                        : 'bg-transparent hover:bg-[#111d38] border-[#1e293b] text-slate-300'
+                        : 'bg-transparent hover:bg-slate-100 dark:bg-slate-700 border-slate-200 dark:border-zinc-800 text-slate-600 dark:text-slate-300'
                     }`}
                   >
-                    <Flag className={`w-3.5 h-3.5 ${diverFlagged ? 'text-amber-400 fill-amber-400' : 'text-amber-400'}`} />
+                    <Flag className={`w-3.5 h-3.5 ${diverFlagged ? 'text-amber-600 dark:text-amber-400 fill-amber-400' : 'text-amber-600 dark:text-amber-400'}`} />
                     <span>{diverFlagged ? 'DIVER FLAGGED' : 'FLAG FOR DIVER'}</span>
                   </button>
                 </div>
 
                 <button
                   onClick={handleNextHazard}
-                  className="w-full py-2.5 bg-[#06b6d4] hover:bg-[#22d3ee] text-[#0b1329] font-bold text-xs uppercase tracking-wider rounded-xs transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-cyan-950"
+                  className="w-full py-2.5 premium-button text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-cyan-950"
                 >
                   <span>NEXT HAZARD TARGET</span>
                   <ArrowRight className="w-4 h-4" />

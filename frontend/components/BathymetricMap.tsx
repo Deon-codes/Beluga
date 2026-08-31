@@ -37,37 +37,37 @@ export function BathymetricMap({ surveys, anomalies, onSelectAnomaly, className 
   };
 
   return (
-    <div className={`relative bg-[#070d1e] border border-[#1e293b] rounded-xs overflow-hidden ${className}`}>
+    <div className={`relative bg-blue-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl overflow-hidden ${className}`}>
       {/* Top Map HUD Telemetry */}
-      <div className="absolute top-3 left-3 z-10 bg-[#0b1329]/90 backdrop-blur-xs border border-[#1e293b] px-3 py-1.5 rounded-xs text-xs font-mono flex items-center gap-3">
-        <div className="flex items-center gap-1.5 text-cyan-300 font-bold">
-          <Compass className="w-3.5 h-3.5 text-cyan-400" />
-          <span>BATHYMETRIC SEABED TACTICAL GRID</span>
+      <div className="absolute top-3 left-3 z-10 bg-white dark:bg-zinc-900/90 backdrop-blur-md shadow-sm border border-slate-200 dark:border-zinc-800 px-3 py-1.5 rounded-xl text-xs  flex items-center gap-3">
+        <div className="flex items-center gap-1.5 text-blue-500 dark:text-blue-300 font-bold">
+          <Compass className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+          <span>Bathymetric Map</span>
         </div>
         <span className="text-slate-700">|</span>
-        <span className="text-slate-400">BAY OF BENGAL (SECTOR 04)</span>
+        <span className="text-slate-500 dark:text-slate-500 dark:text-slate-400">Sector 04</span>
         <span className="text-slate-700">|</span>
-        <span className="text-cyan-400 font-mono-tabular">13.0827°N, 80.3128°E</span>
+        <span className="text-blue-600 dark:text-blue-400 ">13.0827°N, 80.3128°E</span>
       </div>
 
       {/* Map Layer Controls (Top Right) */}
-      <div className="absolute top-3 right-3 z-10 flex items-center gap-1 bg-[#0b1329]/90 backdrop-blur-xs border border-[#1e293b] p-1 rounded-xs">
+      <div className="absolute top-3 right-3 z-10 flex items-center gap-1 bg-white dark:bg-zinc-900/90 backdrop-blur-md shadow-sm border border-slate-200 dark:border-zinc-800 p-1 rounded-xl">
         <button
           onClick={() => setShowContours(!showContours)}
-          className={`px-2 py-1 text-[11px] font-mono rounded-xs transition-colors ${
+          className={`px-2 py-1 text-[11px]  rounded-xl transition-colors ${
             showContours
-              ? 'bg-cyan-950 text-cyan-300 border border-cyan-800'
-              : 'text-slate-500 hover:text-slate-300'
+              ? 'bg-blue-50 dark:bg-blue-900 text-blue-500 dark:text-blue-300 border border-blue-200 dark:border-blue-800'
+              : 'text-slate-500 hover:text-slate-600 dark:text-slate-600 dark:text-slate-300'
           }`}
         >
           CONTOURS
         </button>
         <button
           onClick={() => setShowTracks(!showTracks)}
-          className={`px-2 py-1 text-[11px] font-mono rounded-xs transition-colors ${
+          className={`px-2 py-1 text-[11px]  rounded-xl transition-colors ${
             showTracks
-              ? 'bg-cyan-950 text-cyan-300 border border-cyan-800'
-              : 'text-slate-500 hover:text-slate-300'
+              ? 'bg-blue-50 dark:bg-blue-900 text-blue-500 dark:text-blue-300 border border-blue-200 dark:border-blue-800'
+              : 'text-slate-500 hover:text-slate-600 dark:text-slate-600 dark:text-slate-300'
           }`}
         >
           TRACKLINES
@@ -75,13 +75,13 @@ export function BathymetricMap({ surveys, anomalies, onSelectAnomaly, className 
         <div className="w-[1px] h-4 bg-slate-800 mx-1" />
         <button
           onClick={() => setZoom(Math.min(2.5, zoom + 0.3))}
-          className="px-2 py-0.5 text-xs text-cyan-400 hover:bg-slate-800 rounded-xs font-bold"
+          className="px-2 py-0.5 text-xs text-blue-600 dark:text-blue-400 hover:bg-slate-800 rounded-xl font-bold"
         >
           +
         </button>
         <button
           onClick={() => setZoom(Math.max(0.8, zoom - 0.3))}
-          className="px-2 py-0.5 text-xs text-cyan-400 hover:bg-slate-800 rounded-xs font-bold"
+          className="px-2 py-0.5 text-xs text-blue-600 dark:text-blue-400 hover:bg-slate-800 rounded-xl font-bold"
         >
           -
         </button>
@@ -99,10 +99,6 @@ export function BathymetricMap({ surveys, anomalies, onSelectAnomaly, className 
               <stop offset="0%" stopColor="#06b6d4" stopOpacity="0.8" />
               <stop offset="100%" stopColor="#22d3ee" stopOpacity="0.3" />
             </linearGradient>
-            <radialGradient id="hotspotGlow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#ef4444" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="#ef4444" stopOpacity="0" />
-            </radialGradient>
           </defs>
 
           {/* Bathymetry isobath lines */}
@@ -143,11 +139,11 @@ export function BathymetricMap({ surveys, anomalies, onSelectAnomaly, className 
             </g>
           )}
 
-          {/* Ghost Net Cluster Hotspot Glow */}
-          <circle cx="58%" cy="48%" r="65" fill="url(#hotspotGlow)" />
-          <circle cx="58%" cy="48%" r="35" fill="none" stroke="#ef4444" strokeWidth="1" strokeDasharray="3 3" />
-          <text x="63%" y="46%" fill="#ef4444" fontSize="10" fontFamily="monospace" fontWeight="bold">
-            GHOST NET CLUSTER #1
+          {/* Ghost Net Cluster Hazard Zone */}
+          <circle cx="58%" cy="48%" r="40" fill="#fca5a5" fillOpacity="0.08" stroke="#f87171" strokeWidth="1" strokeDasharray="4 4" />
+          <circle cx="58%" cy="48%" r="3" fill="#ef4444" />
+          <text x="60%" y="48.5%" fill="#ef4444" fontSize="10" fontFamily="sans-serif" fontWeight="600">
+            Ghost Net Cluster
           </text>
 
           {/* Survey Vessel Tracklines */}
@@ -179,7 +175,7 @@ export function BathymetricMap({ surveys, anomalies, onSelectAnomaly, className 
           const left = lonToX(lon);
           const isCritical = anom.risk === 'CRITICAL';
           const isHigh = anom.risk === 'HIGH';
-          const pinColor = isCritical ? 'text-red-400 bg-red-950 border-red-500' : isHigh ? 'text-orange-400 bg-orange-950 border-orange-500' : 'text-cyan-400 bg-cyan-950 border-cyan-500';
+          const pinColor = isCritical ? 'text-red-600 dark:text-red-600 dark:text-red-400 bg-red-950 border-red-500' : isHigh ? 'text-orange-400 bg-orange-950 border-orange-500' : 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900 border-blue-500';
 
           return (
             <div
@@ -200,10 +196,10 @@ export function BathymetricMap({ surveys, anomalies, onSelectAnomaly, className 
               </div>
 
               {/* Hover Tag */}
-              <div className="absolute left-1/2 -translate-x-1/2 bottom-7 hidden group-hover:flex flex-col bg-[#0b1329] border border-cyan-500 text-slate-100 text-[10px] p-2 rounded-xs whitespace-nowrap shadow-2xl z-30 font-mono">
-                <span className="font-bold text-cyan-300">{anom.class_name}</span>
-                <span className="text-slate-400">{anom.id} | {anom.risk}</span>
-                <span className="text-slate-400 font-mono-tabular">
+              <div className="absolute left-1/2 -translate-x-1/2 bottom-7 hidden group-hover:flex flex-col bg-white dark:bg-zinc-900 border border-blue-500 text-slate-900 dark:text-slate-900 dark:text-slate-100 text-[10px] p-2 rounded-xl whitespace-nowrap shadow-2xl z-30 ">
+                <span className="font-bold text-blue-500 dark:text-blue-300">{anom.class_name}</span>
+                <span className="text-slate-500 dark:text-slate-500 dark:text-slate-400">{anom.id} | {anom.risk}</span>
+                <span className="text-slate-500 dark:text-slate-500 dark:text-slate-400 ">
                   {lat.toFixed(4)}°N, {lon.toFixed(4)}°E
                 </span>
               </div>
@@ -214,27 +210,27 @@ export function BathymetricMap({ surveys, anomalies, onSelectAnomaly, className 
 
       {/* Selected Pin Callout Drawer (Bottom Left) */}
       {selectedPin && (
-        <div className="absolute bottom-3 left-3 z-30 bg-[#0b1329]/95 backdrop-blur-md border border-cyan-600 p-3 rounded-xs text-xs font-mono max-w-sm space-y-2 shadow-2xl">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
-            <span className="font-bold text-cyan-300">{selectedPin.class_name}</span>
-            <button onClick={() => setSelectedPin(null)} className="text-slate-400 hover:text-slate-200">
+        <div className="absolute bottom-3 left-3 z-30 bg-white dark:bg-zinc-900/95 backdrop-blur-md border border-cyan-600 p-3 rounded-xl text-xs  max-w-sm space-y-2 shadow-2xl">
+          <div className="flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 pb-1.5">
+            <span className="font-bold text-blue-500 dark:text-blue-300">{selectedPin.class_name}</span>
+            <button onClick={() => setSelectedPin(null)} className="text-slate-500 dark:text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-700 dark:text-slate-200">
               ✕
             </button>
           </div>
           <div className="flex items-center gap-2">
             <RiskBadge level={selectedPin.risk} size="sm" />
-            <span className="text-slate-400">CONF: <strong className="text-slate-200">{selectedPin.confidence_pct}%</strong></span>
+            <span className="text-slate-500 dark:text-slate-500 dark:text-slate-400">CONF: <strong className="text-slate-700 dark:text-slate-700 dark:text-slate-200">{selectedPin.confidence_pct}%</strong></span>
           </div>
-          <p className="text-[11px] text-slate-300 leading-tight">
+          <p className="text-[11px] text-slate-600 dark:text-slate-600 dark:text-slate-300 leading-tight">
             Dimensions: {selectedPin.dimensions_m.length_m ?? selectedPin.dimensions_m.length ?? 0}m × {selectedPin.dimensions_m.width_m ?? selectedPin.dimensions_m.width ?? 0}m × {selectedPin.dimensions_m.height_m ?? selectedPin.dimensions_m.height ?? 0}m
           </p>
           <div className="pt-1 flex items-center justify-between">
-            <span className="text-[10px] text-slate-400 font-mono-tabular">
+            <span className="text-[10px] text-slate-500 dark:text-slate-500 dark:text-slate-400 ">
               {(selectedPin.location.lat ?? 13.0827).toFixed(6)}°N, {(selectedPin.location.lon ?? 80.3128).toFixed(6)}°E
             </span>
             <Link
               href={`/surveys/${selectedPin.survey_id || 'SURV-2026-NIOT-088'}`}
-              className="text-[11px] text-cyan-400 hover:text-cyan-200 font-bold flex items-center gap-1 hover:underline"
+              className="text-[11px] text-blue-600 dark:text-blue-400 hover:text-cyan-200 font-bold flex items-center gap-1 hover:underline"
             >
               INSPECT IN WATERFALL <ChevronRight className="w-3 h-3" />
             </Link>
@@ -243,8 +239,8 @@ export function BathymetricMap({ surveys, anomalies, onSelectAnomaly, className 
       )}
 
       {/* Bottom Right Bathymetric Legend */}
-      <div className="absolute bottom-3 right-3 z-10 bg-[#0b1329]/90 backdrop-blur-xs border border-[#1e293b] px-3 py-2 rounded-xs text-[10px] font-mono text-slate-400 space-y-1">
-        <div className="font-bold text-slate-200 uppercase tracking-wider">MAP LEGEND</div>
+      <div className="absolute bottom-3 right-3 z-10 bg-white dark:bg-zinc-900/90 backdrop-blur-md shadow-sm border border-slate-200 dark:border-zinc-800 px-3 py-2 rounded-xl text-[10px]  text-slate-500 dark:text-slate-500 dark:text-slate-400 space-y-1">
+        <div className="font-bold text-slate-700 dark:text-slate-700 dark:text-slate-200 uppercase tracking-wider">MAP LEGEND</div>
         <div className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full bg-red-500 inline-block" />
           <span>Critical Risk (Wreck / UXO / Snag)</span>

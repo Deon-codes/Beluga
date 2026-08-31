@@ -153,41 +153,41 @@ export default function DetectionsCatalogPage() {
   ]);
 
   return (
-    <div className="p-4 max-w-7xl mx-auto space-y-4 font-mono select-none">
+    <div className="p-4 max-w-7xl mx-auto space-y-4  select-none">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#1e293b] pb-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-zinc-800 pb-3">
         <div>
-          <h1 className="text-lg font-black tracking-wider text-slate-100 uppercase flex items-center gap-2">
-            <ShieldAlert className="w-5 h-5 text-cyan-400" />
+          <h1 className="text-lg font-black tracking-wider text-slate-900 dark:text-slate-100 uppercase flex items-center gap-2">
+            <ShieldAlert className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             GLOBAL HAZARD CATALOG // 17-CLASS ACOUSTIC INVENTORY
           </h1>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             Multi-spectral side-scan sonar anomaly records, bounding geometry, and divergence certainty
           </p>
         </div>
 
-        <div className="text-xs text-slate-400 font-mono-tabular">
-          TOTAL INDEXED: <strong className="text-cyan-300 font-bold">{allDetections.length}</strong> | FILTERED:{' '}
-          <strong className="text-emerald-400 font-bold">{filteredDetections.length}</strong>
+        <div className="text-xs text-slate-500 dark:text-slate-400 ">
+          TOTAL INDEXED: <strong className="text-blue-500 dark:text-blue-300 font-bold">{allDetections.length}</strong> | FILTERED:{' '}
+          <strong className="text-emerald-600 dark:text-emerald-400 font-bold">{filteredDetections.length}</strong>
         </div>
       </div>
 
       {/* Filter Control Bar */}
-      <div className="bg-[#0b1329] border border-[#1e293b] p-3 rounded-xs space-y-3 reticle-box">
+      <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 p-3 rounded-xl space-y-3 ">
         {/* Search and Class selector */}
         <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
           {/* Text Search */}
-          <div className="sm:col-span-6 relative flex items-center bg-[#070e20] border border-slate-700 px-2.5 py-1.5 rounded-xs">
-            <Search className="w-4 h-4 text-cyan-400 mr-2 shrink-0" />
+          <div className="sm:col-span-6 relative flex items-center bg-slate-50 dark:bg-slate-900 border border-slate-700 px-2.5 py-1.5 rounded-xl">
+            <Search className="w-4 h-4 text-blue-600 dark:text-blue-400 mr-2 shrink-0" />
             <input
               type="text"
               placeholder="Search by Anomaly ID, target class, survey ID, or notes..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="bg-transparent border-none text-xs text-slate-200 focus:outline-none w-full font-mono placeholder:text-slate-600"
+              className="bg-transparent border-none text-xs text-slate-700 dark:text-slate-200 focus:outline-none w-full  placeholder:text-slate-600"
             />
             {search && (
-              <button onClick={() => setSearch('')} className="text-slate-500 hover:text-slate-200">
+              <button onClick={() => setSearch('')} className="text-slate-500 hover:text-slate-700 dark:text-slate-200">
                 <X className="w-3.5 h-3.5" />
               </button>
             )}
@@ -198,32 +198,32 @@ export default function DetectionsCatalogPage() {
             <button
               type="button"
               onClick={() => setClassDropdownOpen(!classDropdownOpen)}
-              className="w-full flex items-center justify-between bg-[#070e20] border border-slate-700 hover:border-cyan-600 px-3 py-1.5 rounded-xs text-xs text-slate-200 font-mono"
+              className="w-full flex items-center justify-between bg-slate-50 dark:bg-slate-900 border border-slate-700 hover:border-cyan-600 px-3 py-1.5 rounded-xl text-xs text-slate-700 dark:text-slate-200 "
             >
               <div className="flex items-center gap-1.5 truncate">
-                <Filter className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                <Filter className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
                 <span className="truncate">
                   {selectedClasses.length === 0
                     ? 'All 17 Sonar Classes Selected'
                     : `${selectedClasses.length} Classes Selected`}
                 </span>
               </div>
-              <span className="text-[10px] text-cyan-400 font-bold ml-2">▼</span>
+              <span className="text-[10px] text-blue-600 dark:text-blue-400 font-bold ml-2">▼</span>
             </button>
 
             {/* Dropdown Menu */}
             {classDropdownOpen && (
-              <div className="absolute left-0 right-0 mt-1 bg-[#070e20] border border-cyan-800 shadow-2xl p-2 rounded-xs z-50 max-h-60 overflow-y-auto space-y-1">
-                <div className="flex justify-between pb-1 mb-1 border-b border-slate-800 text-[10px]">
+              <div className="absolute left-0 right-0 mt-1 bg-slate-50 dark:bg-slate-900 border border-blue-200 dark:border-blue-800 shadow-2xl p-2 rounded-xl z-50 max-h-60 overflow-y-auto space-y-1">
+                <div className="flex justify-between pb-1 mb-1 border-b border-slate-200 dark:border-zinc-800 text-[10px]">
                   <button
                     onClick={() => setSelectedClasses([...SONAR_CLASSES])}
-                    className="text-cyan-400 hover:underline"
+                    className="text-blue-600 dark:text-blue-400 hover:underline"
                   >
                     Select All
                   </button>
                   <button
                     onClick={() => setSelectedClasses([])}
-                    className="text-slate-400 hover:underline"
+                    className="text-slate-500 dark:text-slate-400 hover:underline"
                   >
                     Clear
                   </button>
@@ -233,13 +233,13 @@ export default function DetectionsCatalogPage() {
                   return (
                     <label
                       key={cls}
-                      className="flex items-center gap-2 p-1 hover:bg-[#111d38] rounded-xs cursor-pointer text-xs text-slate-300"
+                      className="flex items-center gap-2 p-1 hover:bg-slate-100 dark:bg-slate-700 rounded-xl cursor-pointer text-xs text-slate-600 dark:text-slate-300"
                     >
                       <input
                         type="checkbox"
                         checked={isChecked}
                         onChange={() => handleToggleClass(cls)}
-                        className="rounded-xs border-slate-700 bg-slate-900 text-cyan-500 focus:ring-0"
+                        className="rounded-xl border-slate-700 bg-slate-900 text-cyan-500 focus:ring-0"
                       />
                       <span className="truncate">{cls}</span>
                     </label>
@@ -251,17 +251,17 @@ export default function DetectionsCatalogPage() {
         </div>
 
         {/* Risk Level Pills, Confidence Slider, and Flags */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-1 border-t border-slate-800/80 text-xs">
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-1 border-t border-slate-200 dark:border-zinc-800/80 text-xs">
           {/* Risk Level Toggles */}
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-slate-400 text-[11px] font-bold mr-1">RISK:</span>
+            <span className="text-slate-500 dark:text-slate-400 text-[11px] font-bold mr-1">RISK:</span>
             {(['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'] as RiskLevel[]).map((r) => {
               const active = selectedRisks.includes(r);
               return (
                 <button
                   key={r}
                   onClick={() => handleToggleRisk(r)}
-                  className={`px-2 py-0.5 text-[10px] font-bold rounded-xs border transition-colors ${
+                  className={`px-2 py-0.5 text-[10px] font-bold rounded-xl border transition-colors ${
                     active
                       ? r === 'CRITICAL'
                         ? 'bg-red-950 text-red-300 border-red-500'
@@ -270,7 +270,7 @@ export default function DetectionsCatalogPage() {
                         : r === 'MEDIUM'
                         ? 'bg-amber-950 text-amber-300 border-amber-500'
                         : 'bg-emerald-950 text-emerald-300 border-emerald-500'
-                      : 'bg-[#070e20] text-slate-400 border-slate-800 hover:border-slate-600'
+                      : 'bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-zinc-800 hover:border-slate-600'
                   }`}
                 >
                   {r}
@@ -280,8 +280,8 @@ export default function DetectionsCatalogPage() {
           </div>
 
           {/* Confidence Slider */}
-          <div className="flex items-center gap-2 text-[11px] text-slate-300">
-            <span className="text-slate-400">MIN CONFIDENCE:</span>
+          <div className="flex items-center gap-2 text-[11px] text-slate-600 dark:text-slate-300">
+            <span className="text-slate-500 dark:text-slate-400">MIN CONFIDENCE:</span>
             <input
               type="range"
               min="40"
@@ -290,7 +290,7 @@ export default function DetectionsCatalogPage() {
               onChange={(e) => setMinConfidence(Number(e.target.value))}
               className="w-24 accent-cyan-400 cursor-pointer"
             />
-            <span className="font-bold text-cyan-300 font-mono-tabular min-w-[35px]">
+            <span className="font-bold text-blue-500 dark:text-blue-300  min-w-[35px]">
               {minConfidence}%
             </span>
           </div>
@@ -299,10 +299,10 @@ export default function DetectionsCatalogPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setOnlyShadows(!onlyShadows)}
-              className={`px-2 py-0.5 text-[10px] rounded-xs border transition-colors ${
+              className={`px-2 py-0.5 text-[10px] rounded-xl border transition-colors ${
                 onlyShadows
                   ? 'bg-red-950 border-red-600 text-red-300 font-bold'
-                  : 'bg-[#070e20] border-slate-800 text-slate-400'
+                  : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-zinc-800 text-slate-500 dark:text-slate-400'
               }`}
             >
               HAS SHADOW
@@ -310,10 +310,10 @@ export default function DetectionsCatalogPage() {
 
             <button
               onClick={() => setOnlyDiverFlagged(!onlyDiverFlagged)}
-              className={`px-2 py-0.5 text-[10px] rounded-xs border transition-colors ${
+              className={`px-2 py-0.5 text-[10px] rounded-xl border transition-colors ${
                 onlyDiverFlagged
                   ? 'bg-amber-950 border-amber-600 text-amber-300 font-bold'
-                  : 'bg-[#070e20] border-slate-800 text-slate-400'
+                  : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-zinc-800 text-slate-500 dark:text-slate-400'
               }`}
             >
               DIVER FLAGGED
@@ -321,7 +321,7 @@ export default function DetectionsCatalogPage() {
 
             <button
               onClick={clearFilters}
-              className="text-[10px] text-slate-500 hover:text-cyan-400 underline ml-2"
+              className="text-[10px] text-slate-500 hover:text-blue-600 dark:text-blue-400 underline ml-2"
             >
               Reset
             </button>
@@ -330,17 +330,17 @@ export default function DetectionsCatalogPage() {
       </div>
 
       {/* High-Density Global Hazard Table */}
-      <div className="bg-[#0b1329] border border-[#1e293b] rounded-xs overflow-hidden">
+      <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl overflow-hidden">
         <div className="overflow-x-auto max-h-[580px]">
           <table className="w-full text-left text-xs border-collapse">
-            <thead className="bg-[#070e20] text-slate-400 border-b border-[#1e293b] sticky top-0 z-10 text-[11px] uppercase tracking-wider">
+            <thead className="bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-zinc-800 sticky top-0 z-10 text-[11px] uppercase tracking-wider">
               <tr>
                 <th
                   onClick={() => {
                     setSortField('id');
                     setSortAsc(!sortAsc);
                   }}
-                  className="py-2.5 px-3 font-semibold cursor-pointer hover:text-cyan-300"
+                  className="py-2.5 px-3 font-semibold cursor-pointer hover:text-blue-500 dark:text-blue-300"
                 >
                   <div className="flex items-center gap-1">
                     <span>ANOMALY ID</span>
@@ -353,7 +353,7 @@ export default function DetectionsCatalogPage() {
                     setSortField('risk');
                     setSortAsc(!sortAsc);
                   }}
-                  className="py-2.5 px-3 font-semibold cursor-pointer hover:text-cyan-300"
+                  className="py-2.5 px-3 font-semibold cursor-pointer hover:text-blue-500 dark:text-blue-300"
                 >
                   <div className="flex items-center gap-1">
                     <span>RISK LEVEL</span>
@@ -365,7 +365,7 @@ export default function DetectionsCatalogPage() {
                     setSortField('confidence_pct');
                     setSortAsc(!sortAsc);
                   }}
-                  className="py-2.5 px-3 font-semibold cursor-pointer hover:text-cyan-300"
+                  className="py-2.5 px-3 font-semibold cursor-pointer hover:text-blue-500 dark:text-blue-300"
                 >
                   <div className="flex items-center gap-1">
                     <span>CONFIDENCE ± σ</span>
@@ -377,7 +377,7 @@ export default function DetectionsCatalogPage() {
                     setSortField('dimensions');
                     setSortAsc(!sortAsc);
                   }}
-                  className="py-2.5 px-3 font-semibold cursor-pointer hover:text-cyan-300"
+                  className="py-2.5 px-3 font-semibold cursor-pointer hover:text-blue-500 dark:text-blue-300"
                 >
                   <div className="flex items-center gap-1">
                     <span>METRIC DIMS (L×W×H)</span>
@@ -390,7 +390,7 @@ export default function DetectionsCatalogPage() {
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-[#1e293b] text-slate-300 font-mono-tabular">
+            <tbody className="divide-y divide-[#1e293b] text-slate-600 dark:text-slate-300 ">
               {filteredDetections.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="py-8 text-center text-slate-500 text-xs">
@@ -404,8 +404,8 @@ export default function DetectionsCatalogPage() {
                     className="hover:bg-[#0e1935] transition-colors group text-xs"
                   >
                     {/* Anomaly ID */}
-                    <td className="py-2.5 px-3 font-bold text-cyan-300 flex items-center gap-1.5">
-                      <Crosshair className="w-3 h-3 text-cyan-400 shrink-0" />
+                    <td className="py-2.5 px-3 font-bold text-blue-500 dark:text-blue-300 flex items-center gap-1.5">
+                      <Crosshair className="w-3 h-3 text-blue-600 dark:text-blue-400 shrink-0" />
                       <span>{anom.id}</span>
                       {anom.diver_recovery_flagged && (
                         <span className="w-1.5 h-1.5 rounded-full bg-amber-400" title="Flagged for diver" />
@@ -413,7 +413,7 @@ export default function DetectionsCatalogPage() {
                     </td>
 
                     {/* Class */}
-                    <td className="py-2.5 px-3 font-semibold text-slate-200">
+                    <td className="py-2.5 px-3 font-semibold text-slate-700 dark:text-slate-200">
                       <div className="truncate max-w-[200px]">{anom.class_name}</div>
                     </td>
 
@@ -425,7 +425,7 @@ export default function DetectionsCatalogPage() {
                     {/* Confidence ± Uncertainty */}
                     <td className="py-2.5 px-3">
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-cyan-300">
+                        <span className="font-bold text-blue-500 dark:text-blue-300">
                           {anom.confidence_pct.toFixed(1)}%
                         </span>
                         <span className="text-slate-500 text-[10px]">
@@ -435,11 +435,11 @@ export default function DetectionsCatalogPage() {
                     </td>
 
                     {/* Dimensions */}
-                    <td className="py-2.5 px-3 text-slate-200">
+                    <td className="py-2.5 px-3 text-slate-700 dark:text-slate-200">
                       <span>
                         {(anom.dimensions_m.length_m ?? anom.dimensions_m.length ?? 0).toFixed(1)}m × {(anom.dimensions_m.width_m ?? anom.dimensions_m.width ?? 0).toFixed(1)}m
                         {(anom.dimensions_m.height_m ?? anom.dimensions_m.height) != null && (
-                          <span className="text-cyan-400"> × {(anom.dimensions_m.height_m ?? anom.dimensions_m.height ?? 0).toFixed(1)}m</span>
+                          <span className="text-blue-600 dark:text-blue-400"> × {(anom.dimensions_m.height_m ?? anom.dimensions_m.height ?? 0).toFixed(1)}m</span>
                         )}
                       </span>
                     </td>
@@ -455,7 +455,7 @@ export default function DetectionsCatalogPage() {
                     </td>
 
                     {/* Survey ID */}
-                    <td className="py-2.5 px-3 text-slate-400 text-[11px]">
+                    <td className="py-2.5 px-3 text-slate-500 dark:text-slate-400 text-[11px]">
                       {anom.survey_id || 'SURV-2026-NIOT-088'}
                     </td>
 
@@ -463,7 +463,7 @@ export default function DetectionsCatalogPage() {
                     <td className="py-2.5 px-3 text-right">
                       <Link
                         href={`/surveys/${anom.survey_id || 'SURV-2026-NIOT-088'}`}
-                        className="inline-flex items-center gap-1 px-2 py-1 bg-[#111d38] hover:bg-cyan-950 border border-slate-700 hover:border-cyan-500 text-cyan-300 text-[11px] font-bold rounded-xs transition-colors"
+                        className="inline-flex items-center gap-1 px-2 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-blue-50 dark:bg-blue-900 border border-slate-700 hover:border-blue-500 text-blue-500 dark:text-blue-300 text-[11px] font-bold rounded-xl transition-colors"
                       >
                         <Eye className="w-3 h-3" />
                         <span>INSPECT</span>

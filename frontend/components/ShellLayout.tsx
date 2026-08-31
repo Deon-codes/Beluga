@@ -1,10 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  Radio,
   LayoutDashboard,
   UploadCloud,
   FolderArchive,
@@ -14,11 +13,8 @@ import {
   ChevronRight,
   ShieldAlert,
   Bell,
-  Cpu,
-  Waves,
-  Compass,
-  Clock,
-  Terminal,
+  Activity,
+  Menu,
 } from 'lucide-react';
 
 interface ShellLayoutProps {
@@ -28,90 +24,40 @@ interface ShellLayoutProps {
 export function ShellLayout({ children }: ShellLayoutProps) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
-  const [utcTime, setUtcTime] = useState<string>('');
-  const [julianDate, setJulianDate] = useState<string>('');
   const [alertOpen, setAlertOpen] = useState(false);
 
-  // Hydrographic UTC Clock update
-  useEffect(() => {
-    const updateClock = () => {
-      const now = new Date();
-      const zulu = now.toISOString().substring(11, 19) + 'Z';
-      const year = now.getUTCFullYear();
-      const start = new Date(Date.UTC(year, 0, 0));
-      const diff = now.getTime() - start.getTime();
-      const oneDay = 1000 * 60 * 60 * 24;
-      const day = Math.floor(diff / oneDay);
-      setUtcTime(zulu);
-      setJulianDate(`DOY-${day.toString().padStart(3, '0')}.${year}`);
-    };
-
-    updateClock();
-    const interval = setInterval(updateClock, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
   const navItems = [
-    { label: 'Mission Command', href: '/dashboard', icon: LayoutDashboard },
-    { label: 'Ingest Log', href: '/surveys/new', icon: UploadCloud },
-    { label: 'Survey Archive', href: '/surveys', icon: FolderArchive },
-    { label: 'Hazard Catalog', href: '/detections', icon: Search },
-    { label: 'Export Reports', href: '/reports', icon: FileText },
+    { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+    { label: 'Upload Survey', href: '/surveys/new', icon: UploadCloud },
+    { label: 'Surveys', href: '/surveys', icon: FolderArchive },
+    { label: 'Detections', href: '/detections', icon: Search },
+    { label: 'Reports', href: '/reports', icon: FileText },
   ];
 
-  // Derive route breadcrumb
-  const getBreadcrumb = () => {
-    if (pathname === '/dashboard' || pathname === '/') return 'MISSION COMMAND // TAC-OPS';
-    if (pathname === '/surveys/new') return 'INGEST WORKSTATION // ACOUSTIC UPLOAD';
-    if (pathname?.startsWith('/surveys/')) return 'EVALUATOR WORKSTATION // WATERFALL INSPECTOR';
-    if (pathname === '/surveys') return 'SURVEY ARCHIVE // NIOT DATA LAKE';
-    if (pathname === '/detections') return 'GLOBAL HAZARD CATALOG // 17-CLASS INVENTORY';
-    if (pathname === '/reports') return 'COMPLIANCE & EXPORT TERMINAL // NIOT-MoES';
-    return 'HYDROGRAPHIC COMMAND';
-  };
-
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#020617] text-slate-200 font-mono select-none">
-      {/* Collapsible Left Sidebar */}
+    <div className="flex h-screen w-screen overflow-hidden bg-[#f8fafc] dark:bg-[#09090b] text-slate-900 dark:text-slate-100 selection:bg-primary-100 selection:text-primary-900">
+      {/* Sidebar */}
       <aside
-        className={`relative flex flex-col justify-between bg-[#0b1329] border-r border-[#1e293b] transition-all duration-300 z-30 ${
-          collapsed ? 'w-16' : 'w-64'
+        className={`relative flex flex-col justify-between bg-white dark:bg-zinc-950 border-r border-slate-200/60 dark:border-zinc-800/80 transition-all duration-300 z-30 shadow-sm ${
+          collapsed ? 'w-20' : 'w-72'
         }`}
       >
-        {/* Top Header / Branding */}
-        <div>
-          <div className="flex items-center justify-between p-3.5 border-b border-[#1e293b] bg-[#070e20]">
-            <Link href="/dashboard" className="flex items-center gap-2.5 overflow-hidden group">
-              <div className="relative flex items-center justify-center w-7 h-7 rounded-sm bg-[#06b6d4] text-[#0b1329] font-black shrink-0 shadow-sm shadow-cyan-500/20">
-                <Radio className="w-4 h-4 text-[#0b1329]" />
-                <div className="absolute inset-0 rounded-sm border border-cyan-300 animate-ping opacity-40" />
+        <div className="flex flex-col h-full">
+          <div className="flex items-center justify-between p-6 pb-4">
+            <Link href="/dashboard" className="flex items-center gap-4 overflow-hidden group">
+              <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 text-white shadow-md shadow-primary-500/20 shrink-0 transition-transform group-hover:scale-105">
+                <Activity className="w-5 h-5" />
               </div>
               {!collapsed && (
-                <div className="min-w-0">
-                  <div className="text-xs font-bold tracking-tighter text-white flex items-center gap-1 uppercase">
-                    SONAR-AI
-                    <span className="text-[9px] px-1 py-0.2 bg-cyan-950/80 border border-cyan-800 text-cyan-400 font-mono rounded-xs">
-                      v2.1
-                    </span>
-                  </div>
-                  <div className="text-[10px] text-slate-400 tracking-wider truncate">
-                    NIOT // MoES INDIA
-                  </div>
+                <div className="min-w-0 transition-opacity duration-300">
+                  <h1 className="text-lg font-bold tracking-tight text-slate-900 dark:text-white leading-tight">Beluga</h1>
+                  <p className="text-xs font-medium text-slate-500 dark:text-zinc-400">Marine Intelligence</p>
                 </div>
               )}
             </Link>
-
-            <button
-              onClick={() => setCollapsed(!collapsed)}
-              title={collapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
-              className="text-slate-400 hover:text-cyan-300 p-1 hover:bg-[#111d38] border border-transparent hover:border-slate-700 rounded-xs transition-colors"
-            >
-              {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-            </button>
           </div>
 
-          {/* Navigation Links */}
-          <nav className="p-2 space-y-1 mt-2">
+          <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
             {navItems.map((item) => {
               const isActive =
                 pathname === item.href ||
@@ -123,190 +69,96 @@ export function ShellLayout({ children }: ShellLayoutProps) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-xs text-xs font-medium transition-all ${
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group ${
                     isActive
-                      ? 'bg-cyan-950/80 text-cyan-300 border-l-2 border-cyan-400 shadow-sm'
-                      : 'text-slate-400 hover:bg-[#111d38] hover:text-slate-200'
+                      ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 shadow-sm shadow-primary-500/5'
+                      : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 hover:text-slate-900 dark:hover:bg-zinc-900/50 dark:hover:text-slate-200'
                   }`}
                   title={collapsed ? item.label : undefined}
                 >
-                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-cyan-400' : 'text-slate-400'}`} />
+                  <Icon className={`w-5 h-5 shrink-0 transition-colors ${isActive ? 'text-primary-600 dark:text-primary-400' : 'text-slate-400 dark:text-zinc-500 group-hover:text-slate-600 dark:group-hover:text-zinc-400'}`} />
                   {!collapsed && <span className="truncate">{item.label}</span>}
                 </Link>
               );
             })}
           </nav>
-        </div>
-
-        {/* Operational Status Box in Sidebar */}
-        <div className="p-3 border-t border-[#1e293b] bg-[#070e20] text-[10px] space-y-2">
-          {!collapsed ? (
-            <>
-              <div className="flex items-center justify-between text-slate-400">
-                <span className="flex items-center gap-1.5 text-emerald-400 font-bold">
-                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  CUDA-0 READY
-                </span>
-                <span className="text-slate-500 font-mono-tabular">455 kHz</span>
-              </div>
-              <div className="text-slate-400 space-y-1 border-t border-slate-800 pt-1.5">
-                <div className="flex justify-between">
-                  <span className="text-slate-500">MODEL:</span>
-                  <span className="text-cyan-300 font-bold">YOLOv8s-Sonar v2.1</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">PIPELINE:</span>
-                  <span className="text-emerald-400 font-bold">SYSTEM ONLINE</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">AGENCY:</span>
-                  <span className="text-slate-300">MoES / NIOT-SIH</span>
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="flex flex-col items-center gap-1.5 py-1">
-              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" title="System Online" />
-              <Terminal className="w-3.5 h-3.5 text-slate-500" />
-            </div>
-          )}
+          
+          <div className="p-4 border-t border-slate-200/60 dark:border-zinc-800/80">
+            <button
+              onClick={() => setCollapsed(!collapsed)}
+              title={collapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+              className="flex items-center justify-center w-full p-2 text-slate-500 dark:text-zinc-400 hover:text-slate-700 dark:hover:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-900 rounded-lg transition-colors"
+            >
+              {collapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
       </aside>
 
       {/* Main Content Area */}
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
-        {/* Persistent Top Telemetry Header */}
-        <header className="flex items-center justify-between h-12 px-4 bg-[#0b1329] border-b border-[#1e293b] z-20 shrink-0">
-          {/* Breadcrumb & Navigation telemetry */}
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="flex items-center gap-2 text-xs">
-              <Compass className="w-4 h-4 text-cyan-400 shrink-0" />
-              <span className="font-bold text-white tracking-wider truncate">
-                {getBreadcrumb()}
-              </span>
-            </div>
-            <div className="h-4 w-px bg-[#1e293b] hidden md:block" />
-            <div className="hidden md:flex items-center gap-3 text-[11px] text-slate-400">
-              <span className="flex items-center gap-1.5">
-                <span className="text-cyan-400 font-bold">MISSION:</span>
-                <span className="text-slate-200">BAY_OF_BENGAL_088</span>
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="text-cyan-400 font-bold">SWATH:</span>
-                <span className="text-cyan-300 font-mono-tabular">100.0M (±50m)</span>
-              </span>
-              <span className="flex items-center gap-1.5 text-emerald-400 font-bold">
-                <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
-                SYSTEM ONLINE
-              </span>
-            </div>
+        {/* Top Header */}
+        <header className="flex items-center justify-between h-16 px-8 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-lg border-b border-slate-200/60 dark:border-zinc-800/80 z-20 shrink-0 sticky top-0">
+          <div className="flex items-center gap-4 min-w-0">
+            {collapsed && (
+              <button 
+                onClick={() => setCollapsed(false)}
+                className="lg:hidden text-slate-500 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white transition-colors"
+              >
+                <Menu className="w-5 h-5" />
+              </button>
+            )}
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white capitalize">
+              {pathname?.split('/')[1] || 'Dashboard'}
+            </h2>
           </div>
 
-          {/* Right Header: Hydrographic Clock + Alerts Tray + Status LEDs */}
-          <div className="flex items-center gap-4 text-xs">
-            {/* UTC Hydrographic Clock */}
-            <div className="text-right">
-              <div className="text-white text-[11px] font-bold leading-none mb-0.5 font-mono-tabular tracking-wider">
-                {utcTime || '14:22:18.42 UTC'}
-              </div>
-              <div className="text-[9px] text-slate-500 uppercase tracking-widest">
-                {julianDate || 'HYDROGRAPHIC CLOCK'}
-              </div>
-            </div>
-
-            {/* LED Status Indicators */}
-            <div className="flex gap-1 items-center px-1" title="Subsystem Link Status">
-              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" title="Sonar Stream Active" />
-              <div className="w-2 h-2 rounded-full bg-cyan-400" title="GPU Link Active" />
-              <div className="w-2 h-2 rounded-full bg-slate-700" title="Telemetry Standby" />
-            </div>
-
-            {/* System Alert Tray */}
+          <div className="flex items-center gap-5">
             <div className="relative">
               <button
                 onClick={() => setAlertOpen(!alertOpen)}
-                className="flex items-center gap-1.5 px-2 py-1 bg-[#111d38] hover:bg-slate-800 border border-slate-700 hover:border-cyan-600 rounded-xs text-xs text-slate-200 transition-colors"
+                className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors relative group"
               >
-                <Bell className="w-3.5 h-3.5 text-amber-400" />
-                <span className="hidden sm:inline">ALERTS</span>
-                <span className="px-1 py-0.2 bg-red-950 border border-red-700 text-red-400 font-bold text-[10px] rounded-xs">
-                  2
-                </span>
+                <Bell className="w-5 h-5 text-slate-500 dark:text-zinc-400 group-hover:text-slate-700 dark:group-hover:text-zinc-300 transition-colors" />
+                <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-zinc-950 shadow-sm" />
               </button>
 
-              {/* Alert Tray Popover */}
               {alertOpen && (
-                <div className="absolute right-0 mt-2 w-80 bg-[#0b1329] border border-[#1e293b] shadow-2xl rounded-xs p-3 z-50 space-y-2.5">
-                  <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                    <span className="text-xs font-bold text-slate-200 flex items-center gap-1.5">
-                      <ShieldAlert className="w-4 h-4 text-amber-400" />
-                      CRITICAL ANOMALY ALERTS
+                <div className="absolute right-0 mt-3 w-80 bg-white dark:bg-zinc-900 border border-slate-200/60 dark:border-zinc-800/80 shadow-xl shadow-slate-200/20 dark:shadow-black/40 rounded-2xl p-5 z-50 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
+                  <div className="flex items-center justify-between border-b border-slate-100 dark:border-zinc-800/80 pb-4 mb-4">
+                    <span className="text-sm font-semibold flex items-center gap-2">
+                      <ShieldAlert className="w-4 h-4 text-amber-500" />
+                      Notifications
                     </span>
                     <button
                       onClick={() => setAlertOpen(false)}
-                      className="text-xs text-slate-400 hover:text-slate-200"
+                      className="text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors"
                     >
                       ✕
                     </button>
                   </div>
-                  <div className="space-y-2 text-xs">
-                    <div className="p-2 bg-red-950/40 border border-red-800/80 rounded-xs space-y-1">
+                  <div className="space-y-3 text-sm">
+                    <div className="p-4 bg-red-50 dark:bg-red-500/10 border border-red-100 dark:border-red-500/20 rounded-xl space-y-1.5 transition-colors hover:bg-red-100 dark:hover:bg-red-500/15 cursor-pointer">
                       <div className="flex items-center justify-between">
-                        <span className="font-bold text-red-300">HAZ-2026-001 [CRITICAL]</span>
-                        <span className="text-[10px] text-slate-400">14:24Z</span>
+                        <span className="font-semibold text-red-700 dark:text-red-400">Critical Anomaly</span>
+                        <span className="text-xs font-medium text-red-500/70 dark:text-red-400/70">Just now</span>
                       </div>
-                      <p className="text-[11px] text-slate-300">
-                        Shipwreck hull detected at 13.0942°N, 80.3248°E. Relief height: 2.8m. Flagged for diver team.
-                      </p>
-                    </div>
-
-                    <div className="p-2 bg-amber-950/40 border border-amber-800/80 rounded-xs space-y-1">
-                      <div className="flex items-center justify-between">
-                        <span className="font-bold text-amber-300">HAZ-2026-002 [HIGH]</span>
-                        <span className="text-[10px] text-slate-400">14:25Z</span>
-                      </div>
-                      <p className="text-[11px] text-slate-300">
-                        Ghost net clump entangled at 13.1018°N, 80.3321°E. Navigation snag risk.
+                      <p className="text-sm text-red-800/80 dark:text-red-300/80 leading-relaxed">
+                        Shipwreck hull detected at 13.0942°N, 80.3248°E. Relief height: 2.8m.
                       </p>
                     </div>
                   </div>
                 </div>
               )}
             </div>
+            
+            <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-primary-400 to-primary-600 border-2 border-white dark:border-zinc-950 shadow-sm cursor-pointer hover:scale-105 transition-transform" />
           </div>
         </header>
 
-        {/* Dynamic Page Content */}
-        <main className="flex-1 min-h-0 overflow-y-auto bg-[#020617]">
+        <main className="flex-1 min-h-0 overflow-y-auto p-6 md:p-8">
           {children}
         </main>
-
-        {/* Global Persistent Tactical Footer */}
-        <footer className="h-8 px-4 bg-[#0b1329] border-t border-[#1e293b] flex items-center justify-between text-[10px] text-slate-400 shrink-0 select-none tracking-wider">
-          <div className="flex items-center gap-6">
-            <span className="flex items-center gap-2">
-              <span className="text-slate-500 uppercase">NODE:</span>
-              <span className="text-emerald-400 font-bold">ONLINE [CUDA-0]</span>
-            </span>
-            <span className="hidden sm:inline-flex items-center gap-2">
-              <span className="text-slate-500 uppercase">MODEL:</span>
-              <span className="text-white font-bold">YOLOv8s-Sonar v2.1</span>
-            </span>
-            <span className="hidden md:inline-flex items-center gap-2">
-              <span className="text-slate-500 uppercase">AGENCY:</span>
-              <span className="text-cyan-300">MoES / NIOT-SIH 26057</span>
-            </span>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <span className="flex items-center gap-2">
-              <span className="text-slate-500 uppercase">PIPELINE:</span>
-              <span className="text-cyan-400 font-bold">ACTIVE & SYNCHRONIZED</span>
-            </span>
-            <div className="h-3 w-px bg-[#1e293b]" />
-            <span className="text-slate-500">V2.4.0-STABLE</span>
-          </div>
-        </footer>
       </div>
     </div>
   );

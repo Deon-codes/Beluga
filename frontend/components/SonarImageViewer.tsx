@@ -618,7 +618,7 @@ export function SonarImageViewer({
   return (
     <div
       ref={containerRef}
-      className={`relative w-full h-full bg-[#070d1e] overflow-hidden select-none border border-[#1e293b] ${className}`}
+      className={`relative w-full h-full bg-[#070d1e] overflow-hidden select-none border border-slate-200 dark:border-zinc-800 ${className}`}
     >
       {/* Tactical Canvas */}
       <canvas
@@ -632,27 +632,27 @@ export function SonarImageViewer({
       />
 
       {/* Top Left Header Tag */}
-      <div className="absolute top-3 left-3 bg-[#0b1329]/90 backdrop-blur-xs border border-[#1e293b] px-3 py-1.5 rounded-xs flex items-center gap-3 text-xs font-mono text-slate-300 pointer-events-none">
+      <div className="absolute top-3 left-3 bg-white dark:bg-zinc-900/90 backdrop-blur-xs border border-slate-200 dark:border-zinc-800 px-3 py-1.5 rounded-xl flex items-center gap-3 text-xs  text-slate-600 dark:text-slate-600 dark:text-slate-300 pointer-events-none">
         <div className="flex items-center gap-1.5">
           <div className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-          <span className="font-bold text-cyan-300 tracking-wider">ACOUSTIC WATERFALL</span>
+          <span className="font-bold text-blue-500 dark:text-blue-300 tracking-wider">ACOUSTIC WATERFALL</span>
         </div>
         <span className="text-slate-600">|</span>
-        <span className="text-slate-300 truncate max-w-[200px]">{surveyTitle}</span>
+        <span className="text-slate-600 dark:text-slate-600 dark:text-slate-300 truncate max-w-[200px]">{surveyTitle}</span>
         <span className="text-slate-600">|</span>
-        <span className="text-cyan-400 font-mono-tabular">ZOOM {(scale * 100).toFixed(0)}%</span>
+        <span className="text-blue-600 dark:text-blue-400 ">ZOOM {(scale * 100).toFixed(0)}%</span>
       </div>
 
       {/* Top Right Channel Mode Pills */}
-      <div className="absolute top-3 right-3 flex items-center gap-1 bg-[#0b1329]/90 backdrop-blur-xs border border-[#1e293b] p-1 rounded-xs">
+      <div className="absolute top-3 right-3 flex items-center gap-1 bg-white dark:bg-zinc-900/90 backdrop-blur-xs border border-slate-200 dark:border-zinc-800 p-1 rounded-xl">
         {(['split', 'port', 'starboard'] as const).map((mode) => (
           <button
             key={mode}
             onClick={() => setChannelMode(mode)}
-            className={`px-2 py-1 text-[11px] font-mono uppercase tracking-wider rounded-xs transition-colors ${
+            className={`px-2 py-1 text-[11px]  uppercase tracking-wider rounded-xl transition-colors ${
               channelMode === mode
-                ? 'bg-cyan-950 text-cyan-300 border border-cyan-700 font-bold'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                ? 'bg-blue-50 dark:bg-blue-900 text-blue-500 dark:text-blue-300 border border-cyan-700 font-bold'
+                : 'text-slate-500 dark:text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-700 dark:text-slate-200 hover:bg-slate-800/60'
             }`}
           >
             {mode === 'split' ? 'SPLIT DUAL' : mode === 'port' ? 'PORT ONLY' : 'STARBOARD'}
@@ -661,26 +661,26 @@ export function SonarImageViewer({
       </div>
 
       {/* Floating Tactical Toolbelt (Bottom Center) */}
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-[#0b1329]/95 backdrop-blur-xs border border-cyan-900/60 shadow-xl px-2 py-1.5 rounded-xs flex items-center gap-1.5 text-slate-300 z-20">
+      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-white dark:bg-zinc-900/95 backdrop-blur-xs border border-cyan-900/60 shadow-xl px-2 py-1.5 rounded-xl flex items-center gap-1.5 text-slate-600 dark:text-slate-600 dark:text-slate-300 z-20">
         {/* Zoom Controls */}
         <button
           onClick={() => handleZoom(1.25)}
           title="Zoom In (+)"
-          className="p-1.5 hover:bg-slate-800 text-cyan-400 hover:text-cyan-200 rounded-xs transition-colors"
+          className="p-1.5 hover:bg-slate-800 text-blue-600 dark:text-blue-400 hover:text-cyan-200 rounded-xl transition-colors"
         >
           <ZoomIn className="w-4 h-4" />
         </button>
         <button
           onClick={() => handleZoom(0.8)}
           title="Zoom Out (-)"
-          className="p-1.5 hover:bg-slate-800 text-cyan-400 hover:text-cyan-200 rounded-xs transition-colors"
+          className="p-1.5 hover:bg-slate-800 text-blue-600 dark:text-blue-400 hover:text-cyan-200 rounded-xl transition-colors"
         >
           <ZoomOut className="w-4 h-4" />
         </button>
         <button
           onClick={fitToScreen}
           title="Fit to Screen"
-          className="p-1.5 hover:bg-slate-800 text-slate-300 hover:text-white rounded-xs transition-colors"
+          className="p-1.5 hover:bg-slate-800 text-slate-600 dark:text-slate-600 dark:text-slate-300 hover:text-white rounded-xl transition-colors"
         >
           <Maximize2 className="w-4 h-4" />
         </button>
@@ -691,10 +691,10 @@ export function SonarImageViewer({
         <button
           onClick={() => setShowBoxes(!showBoxes)}
           title={showBoxes ? 'Hide Bounding Boxes' : 'Show Bounding Boxes'}
-          className={`flex items-center gap-1 px-2 py-1 text-xs font-mono rounded-xs border transition-colors ${
+          className={`flex items-center gap-1 px-2 py-1 text-xs  rounded-xl border transition-colors ${
             showBoxes
-              ? 'bg-cyan-950/80 border-cyan-600 text-cyan-300'
-              : 'border-slate-800 text-slate-500 hover:bg-slate-800'
+              ? 'bg-blue-50 dark:bg-blue-900/80 border-cyan-600 text-blue-500 dark:text-blue-300'
+              : 'border-slate-200 dark:border-zinc-800 text-slate-500 hover:bg-slate-800'
           }`}
         >
           {showBoxes ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
@@ -705,10 +705,10 @@ export function SonarImageViewer({
         <button
           onClick={() => setShowShadows(!showShadows)}
           title={showShadows ? 'Hide Shadow Vectors' : 'Show Acoustic Shadows'}
-          className={`flex items-center gap-1 px-2 py-1 text-xs font-mono rounded-xs border transition-colors ${
+          className={`flex items-center gap-1 px-2 py-1 text-xs  rounded-xl border transition-colors ${
             showShadows
               ? 'bg-red-950/80 border-red-600 text-red-300'
-              : 'border-slate-800 text-slate-500 hover:bg-slate-800'
+              : 'border-slate-200 dark:border-zinc-800 text-slate-500 hover:bg-slate-800'
           }`}
         >
           <Layers className="w-3.5 h-3.5" />
@@ -722,10 +722,10 @@ export function SonarImageViewer({
             setRulerPoints({ start: null, end: null });
           }}
           title={rulerActive ? 'Disable Ruler' : 'Acoustic Distance Ruler'}
-          className={`flex items-center gap-1 px-2 py-1 text-xs font-mono rounded-xs border transition-colors ${
+          className={`flex items-center gap-1 px-2 py-1 text-xs  rounded-xl border transition-colors ${
             rulerActive
               ? 'bg-amber-950/90 border-amber-500 text-amber-300'
-              : 'border-slate-800 text-slate-500 hover:bg-slate-800'
+              : 'border-slate-200 dark:border-zinc-800 text-slate-500 hover:bg-slate-800'
           }`}
         >
           <Ruler className="w-3.5 h-3.5" />
@@ -736,11 +736,11 @@ export function SonarImageViewer({
 
         {/* Heatmap Colormap Select */}
         <div className="flex items-center gap-1">
-          <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+          <Sparkles className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
           <select
             value={colormap}
             onChange={(e) => setColormap(e.target.value as WaterfallOptions['colormap'])}
-            className="bg-[#070d1e] border border-slate-700 text-[11px] font-mono text-cyan-300 py-1 px-1.5 rounded-xs focus:outline-none focus:border-cyan-500 cursor-pointer"
+            className="bg-[#070d1e] border border-slate-700 text-[11px]  text-blue-500 dark:text-blue-300 py-1 px-1.5 rounded-xl focus:outline-none focus:border-blue-500 cursor-pointer"
           >
             <option value="sonar-amber">AMBER ACOUSTIC</option>
             <option value="cyan-tactical">CYAN TACTICAL</option>
@@ -756,7 +756,7 @@ export function SonarImageViewer({
         <button
           onClick={handleExportSnapshot}
           title="Export GeoTIFF/PNG Snapshot"
-          className="p-1.5 hover:bg-slate-800 text-slate-300 hover:text-cyan-300 rounded-xs transition-colors"
+          className="p-1.5 hover:bg-slate-800 text-slate-600 dark:text-slate-600 dark:text-slate-300 hover:text-blue-500 dark:text-blue-300 rounded-xl transition-colors"
         >
           <Camera className="w-4 h-4" />
         </button>
@@ -764,15 +764,15 @@ export function SonarImageViewer({
 
       {/* Bottom Right Live Telemetry Bar */}
       {cursorTelemetry && (
-        <div className="absolute bottom-3 right-3 bg-[#0b1329]/90 backdrop-blur-xs border border-[#1e293b] px-3 py-1.5 rounded-xs font-mono text-[11px] text-slate-400 space-x-3 pointer-events-none hidden sm:flex items-center">
+        <div className="absolute bottom-3 right-3 bg-white dark:bg-zinc-900/90 backdrop-blur-xs border border-slate-200 dark:border-zinc-800 px-3 py-1.5 rounded-xl  text-[11px] text-slate-500 dark:text-slate-500 dark:text-slate-400 space-x-3 pointer-events-none hidden sm:flex items-center">
           <div>
             <span className="text-slate-500">PING: </span>
-            <span className="text-slate-200 font-mono-tabular">#{cursorTelemetry.pingIndex}</span>
+            <span className="text-slate-700 dark:text-slate-700 dark:text-slate-200 ">#{cursorTelemetry.pingIndex}</span>
           </div>
           <span className="text-slate-700">|</span>
           <div>
             <span className="text-slate-500">RANGE: </span>
-            <span className="text-cyan-400 font-bold font-mono-tabular">
+            <span className="text-blue-600 dark:text-blue-400 font-bold ">
               {cursorTelemetry.slantRangeM.toFixed(1)}m
             </span>
           </div>
@@ -782,17 +782,17 @@ export function SonarImageViewer({
             <span
               className={`font-semibold ${
                 cursorTelemetry.channel === 'PORT'
-                  ? 'text-cyan-400'
+                  ? 'text-blue-600 dark:text-blue-400'
                   : cursorTelemetry.channel === 'STARBOARD'
-                  ? 'text-amber-400'
-                  : 'text-slate-400'
+                  ? 'text-amber-600 dark:text-amber-600 dark:text-amber-400'
+                  : 'text-slate-500 dark:text-slate-500 dark:text-slate-400'
               }`}
             >
               {cursorTelemetry.channel}
             </span>
           </div>
           <span className="text-slate-700">|</span>
-          <div className="text-slate-500 font-mono-tabular">
+          <div className="text-slate-500 ">
             [{cursorTelemetry.xPx}px, {cursorTelemetry.yPx}px]
           </div>
         </div>
