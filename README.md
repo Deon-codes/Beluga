@@ -24,8 +24,10 @@ real sonar datasets, covering 17 classes. The full pipeline:
 | Mine detection dataset | Sonar | `MILCO`, `NOMBO` |
 | marine-debris-fls-datasets | ARIS forward-looking sonar | `Tire`, `Bottle`, `Drink-carton`, `Chain`, `Can`, `Valve`, `Propeller`, `Hook`, `Shampoo-bottle`, `Standing-bottle` |
 
-See `notebooks/sonar_pipeline.ipynb` for the SubPipe ingestion/tiling code and
-`notebooks/model_a_unified.ipynb` for the final merged training run.
+See `notebooks/sonar_pipeline.ipynb` for the SubPipe ingestion/tiling code,
+`scripts/merge_datasets.py` for how all 4 sources are combined into one
+17-class dataset, and `notebooks/model_a_unified.ipynb` for the final merged
+training run.
 
 ### 2. Preprocessing
 SubPipe's 5 survey "chunks" are pooled chronologically (they're one
@@ -35,6 +37,15 @@ overlap — this preserves the pipeline's elongated shape instead of
 distorting it with a square resize. About 89% of tiles were pure background,
 which was suppressing recall, so negative tiles were capped at a 2:1 ratio
 against positive ones.
+
+`scripts/merge_datasets.py` then combines all 4 sources into the unified
+17-class dataset: each source's own class IDs get remapped into the shared
+namespace (e.g. KLSG's `shipwreck=3` becomes unified ID `4`), images are
+symlinked in with a `{source}__` filename prefix, and each source's
+train/val/test split is used as-is where the dataset ships its own (KLSG),
+or a random 80/10/10 split otherwise (mine detection, watertank).
+Verified byte-for-byte against the live dataset: identical split counts and
+identical label content (class IDs and box coordinates) for every source.
 
 ### 3. Training
 YOLOv8s, started from COCO-pretrained `yolov8s.pt` weights, `imgsz=640`,
