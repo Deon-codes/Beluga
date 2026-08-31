@@ -1,0 +1,17 @@
+{
+  "mode": "interactive",
+  "workflow": "gsd-standard",
+  "tech_stack": {
+    "frontend": "Next.js 16 (App Router), React 19, Tailwind CSS 4, Lucide Icons, HTML5 Canvas",
+    "backend": "FastAPI, Python 3.10+, Ultralytics YOLOv8, PyTorch, NumPy, OpenCV, Pydantic v2",
+    "model": "YOLOv8s fine-tuned on 17 marine classes (models/model_a_unified_v2.pt)"
+  },
+  "deployment_target": "Local / Edge Marine Drone Prototype",
+  "problem_statement": {
+    "id": "26057",
+    "title": "AI-Powered Automated Underwater Marine Debris and Anomaly Detection System using Side-Scan Sonar Imagery",
+    "org": "Ministry of Earth Sciences (MoES) / National Institute of Ocean Technology (NIOT)",
+    "category": "Software",
+    "theme": "Disaster Management"
+  }
+}
