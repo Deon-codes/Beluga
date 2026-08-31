@@ -5,8 +5,9 @@
 fastapi>=0.104.0
 uvicorn[standard]>=0.24.0
 
-# Data validation
+# Data validation & settings
 pydantic>=2.0.0
+pydantic-settings>=2.0.0
 
 # ML inference (YOLO)
 ultralytics>=8.4.0
@@ -21,6 +22,7 @@ numpy>=1.24.0
 # Geotagging / math (stdlib math is sufficient, numpy for arrays)
 # No extra deps needed.
 
-# Utilities
+# Utilities & Testing
 python-multipart>=0.0.6    # file uploads
 python-dotenv>=1.0.0       # .env loading
+pytest>=7.0.0              # testing

@@ -4,11 +4,11 @@
 **Goal:** Establish FastAPI app structure, Pydantic data contracts, model loader for `models/model_a_unified_v2.pt`, and basic detection pipeline.
 
 ### Tasks:
-- [ ] **Task 1.1**: Define strict Pydantic v2 schemas (`backend/app/models/schemas.py`) for Survey Ingestion, Bounding Box, Detections, Metric Dimensions, Geotags, and Report structures.
-- [ ] **Task 1.2**: Implement `backend/app/pipeline/detect.py` wrapping Ultralytics YOLOv8s with CUDA/CPU fallback, confidence thresholding, and class name mapping for all 17 classes.
-- [ ] **Task 1.3**: Implement `backend/app/routers/survey.py` for `/survey/upload` and `/survey/{id}/analyze` with in-memory task status storage.
-- [ ] **Task 1.4**: Configure `backend/app/main.py` with CORS (`http://localhost:3000`), static storage mounting, and health check.
-- [ ] **Task 1.5**: Validate raw model inference against a sample sonar image.
+- [x] **Task 1.1**: Define strict Pydantic v2 schemas (`backend/app/models/schemas.py`) for Survey Ingestion, Bounding Box, Detections, Metric Dimensions, Geotags, and Report structures.
+- [x] **Task 1.2**: Implement `backend/app/pipeline/detect.py` wrapping Ultralytics YOLOv8s with CUDA/CPU fallback, confidence thresholding, and class name mapping for all 17 classes.
+- [x] **Task 1.3**: Implement `backend/app/routers/survey.py` for `/survey/upload` and `/survey/{id}/analyze` with in-memory task status storage.
+- [x] **Task 1.4**: Configure `backend/app/main.py` with CORS (`http://localhost:3000`), static storage mounting, and health check.
+- [x] **Task 1.5**: Validate raw model inference against a sample sonar image.
 
 ---
 
