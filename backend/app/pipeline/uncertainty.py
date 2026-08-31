@@ -1,8 +1,9 @@
 import logging
+import random
 from pathlib import Path
 from typing import List, Optional, Union
+import cv2
 import numpy as np
-import torch
 from app.config import settings
 from app.models.schemas import BoundingBox, DetectionResult
 from app.pipeline.detect import get_model
@@ -10,11 +11,18 @@ from app.pipeline.filter import compute_iou
 
 logger = logging.getLogger(__name__)
 
-def enable_dropout(model_torch):
-    """Enable dropout layers during inference for Monte Carlo uncertainty estimation."""
-    for m in model_torch.modules():
-        if isinstance(m, torch.nn.Dropout):
-            m.train()
+def _augment(img_bgr: np.ndarray) -> np.ndarray:
+    """Value-only jitter (brightness/gamma/noise) -- no spatial transform, so the
+    YOLO anchor grid stays aligned across passes and IoU-matching against the base
+    detection stays valid. model_a_unified_v2.pt has zero nn.Dropout layers, so this
+    stands in for the missing dropout stochasticity (see test_model_has_no_dropout_layers)."""
+    img = img_bgr.astype(np.float32) / 255.0
+    brightness = random.uniform(0.85, 1.15)
+    gamma = random.uniform(0.85, 1.15)
+    img = np.clip(img * brightness, 0, 1) ** gamma
+    noise = np.random.normal(0, 0.02, img.shape).astype(np.float32)
+    img = np.clip(img + noise, 0, 1)
+    return (img * 255.0).astype(np.uint8)
 
 def run_mc_dropout(
     image_path: Union[str, Path],
@@ -42,13 +50,13 @@ def run_mc_dropout(
     scores_by_det = {i: [base_detections[i].confidence_pct / 100.0] for i in range(len(base_detections))}
 
     try:
-        # Enable dropout in underlying PyTorch model
-        if hasattr(model, "model") and model.model is not None:
-            model.model.train()
-            enable_dropout(model.model)
+        base_img = cv2.imread(image_path_str)
+        if base_img is None:
+            raise ValueError(f"cv2 could not read image at {image_path_str}")
 
         for pass_idx in range(n_passes - 1):
-            results = model.predict(source=image_path_str, conf=conf_threshold, verbose=False)
+            aug_img = _augment(base_img)
+            results = model.predict(source=aug_img, conf=conf_threshold, verbose=False)
             if not results or len(results) == 0 or results[0].boxes is None:
                 continue
 
@@ -76,10 +84,6 @@ def run_mc_dropout(
 
     except Exception as e:
         logger.warning(f"MC-Dropout pass experienced an issue: {e}. Falling back to single-pass confidence.")
-    finally:
-        # Guarantee model is set back to evaluation mode
-        if hasattr(model, "model") and model.model is not None:
-            model.model.eval()
 
     # Assign uncertainty metrics
     for i, det in enumerate(base_detections):
