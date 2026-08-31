@@ -28,31 +28,43 @@ NAMES = """  0: Pipeline
   15: Shampoo-bottle
   16: Standing-bottle"""
 
-for client, prefix in PREFIXES.items():
-    img_dir = CLIENTS_ROOT / client / "train" / "images"
-    lbl_dir = CLIENTS_ROOT / client / "train" / "labels"
-    img_dir.mkdir(parents=True, exist_ok=True)
-    lbl_dir.mkdir(parents=True, exist_ok=True)
+def setup_clients(src_root=SRC_ROOT, clients_root=CLIENTS_ROOT, prefixes=PREFIXES, verbose=True):
+    """Partition src_root's train split into per-client symlink trees under
+    clients_root, one per (client, prefix) pair. Returns {client: n_images}."""
+    counts = {}
+    for client, prefix in prefixes.items():
+        img_dir = clients_root / client / "train" / "images"
+        lbl_dir = clients_root / client / "train" / "labels"
+        img_dir.mkdir(parents=True, exist_ok=True)
+        lbl_dir.mkdir(parents=True, exist_ok=True)
 
-    src_images = sorted((SRC_ROOT / "train" / "images").glob(f"{prefix}*"))
-    n = 0
-    for img_path in src_images:
-        link = img_dir / img_path.name
-        if not link.exists():
-            link.symlink_to(img_path.resolve())
-        lbl_src = (SRC_ROOT / "train" / "labels" / (img_path.stem + ".txt")).resolve()
-        lbl_link = lbl_dir / (img_path.stem + ".txt")
-        if lbl_src.exists() and not lbl_link.exists():
-            lbl_link.symlink_to(lbl_src)
-        n += 1
+        src_images = sorted((src_root / "train" / "images").glob(f"{prefix}*"))
+        n = 0
+        for img_path in src_images:
+            link = img_dir / img_path.name
+            if not link.exists():
+                link.symlink_to(img_path.resolve())
+            lbl_src = (src_root / "train" / "labels" / (img_path.stem + ".txt")).resolve()
+            lbl_link = lbl_dir / (img_path.stem + ".txt")
+            if lbl_src.exists() and not lbl_link.exists():
+                lbl_link.symlink_to(lbl_src)
+            n += 1
 
-    yaml_path = CLIENTS_ROOT / client / "data.yaml"
-    yaml_path.write_text(
-        f"path: {CLIENTS_ROOT / client}\n"
-        f"train: train/images\n"
-        f"val: {SRC_ROOT / 'val' / 'images'}\n"
-        f"\nnc: 17\nnames:\n{NAMES}\n"
-    )
-    print(f"{client}: {n} images -> {img_dir}  (data.yaml -> {yaml_path})")
+        yaml_path = clients_root / client / "data.yaml"
+        yaml_path.write_text(
+            f"path: {clients_root / client}\n"
+            f"train: train/images\n"
+            f"val: {src_root / 'val' / 'images'}\n"
+            f"\nnc: 17\nnames:\n{NAMES}\n"
+        )
+        counts[client] = n
+        if verbose:
+            print(f"{client}: {n} images -> {img_dir}  (data.yaml -> {yaml_path})")
 
-print("\nDone setting up FL client partitions.")
+    if verbose:
+        print("\nDone setting up FL client partitions.")
+    return counts
+
+
+if __name__ == "__main__":
+    setup_clients()

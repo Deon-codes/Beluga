@@ -55,7 +55,7 @@ def random_augment(img):
     return crop.astype(np.float32)
 
 
-def load_batch(paths):
+def load_batch(paths, device=DEVICE):
     view1, view2 = [], []
     for p in paths:
         img = cv2.imread(p)
@@ -66,7 +66,7 @@ def load_batch(paths):
         view2.append(random_augment(img))
     v1 = torch.from_numpy(np.stack(view1)).permute(0, 3, 1, 2)
     v2 = torch.from_numpy(np.stack(view2)).permute(0, 3, 1, 2)
-    return v1.to(DEVICE), v2.to(DEVICE)
+    return v1.to(device), v2.to(device)
 
 
 def nt_xent_loss(z1, z2, temperature):
@@ -91,61 +91,85 @@ class ProjectionHead(nn.Module):
         return self.net(x)
 
 
-print(f"Device: {DEVICE}")
-print("Building fresh (randomly initialized) YOLOv8s backbone...")
-fresh = YOLO("yolov8s.yaml")
-backbone = fresh.model.model[:10].to(DEVICE)  # layers 0-9: Conv..SPPF, ends at 512ch
-proj_head = ProjectionHead(in_dim=512).to(DEVICE)
-
-params = list(backbone.parameters()) + list(proj_head.parameters())
-optimizer = torch.optim.Adam(params, lr=LR)
-
-all_images = glob.glob(f"{TRAIN_IMAGES_DIR}/*")
-print(f"Pretraining pool: {len(all_images)} images (labels ignored -- self-supervised)")
-print(f"Steps: {N_STEPS}, batch_size: {BATCH_SIZE}, img_size: {IMG_SIZE}\n")
-
-backbone.train()
-proj_head.train()
-t0 = time.time()
-losses = []
-
-for step in range(1, N_STEPS + 1):
-    batch_paths = random.sample(all_images, BATCH_SIZE)
-    v1, v2 = load_batch(batch_paths)
-
-    feat1 = backbone(v1)  # (B, 512, h, w)
-    feat2 = backbone(v2)
-    pooled1 = F.adaptive_avg_pool2d(feat1, 1).flatten(1)  # (B, 512)
-    pooled2 = F.adaptive_avg_pool2d(feat2, 1).flatten(1)
-    z1 = proj_head(pooled1)
-    z2 = proj_head(pooled2)
-
-    loss = nt_xent_loss(z1, z2, TEMPERATURE)
-
-    optimizer.zero_grad()
-    loss.backward()
-    optimizer.step()
-
-    losses.append(loss.item())
-    if step % 20 == 0 or step == 1:
-        avg = sum(losses[-20:]) / len(losses[-20:])
-        elapsed = time.time() - t0
-        print(f"  step {step:4d}/{N_STEPS}  loss={loss.item():.4f}  avg20={avg:.4f}  elapsed={elapsed:.0f}s")
-
-print(f"\nPretraining done in {time.time() - t0:.0f}s. "
-      f"Loss: {losses[0]:.4f} -> {sum(losses[-20:]) / 20:.4f}")
-
-torch.save(backbone.state_dict(), OUT_BACKBONE)
-print(f"Pretrained backbone saved: {OUT_BACKBONE}")
-
-print("\nVerifying transfer into a fresh YOLO model's backbone...")
-target = YOLO("yolov8s.yaml")
-target_backbone_sd = target.model.model[:10].state_dict()
-pretrained_sd = torch.load(OUT_BACKBONE, map_location="cpu")
-missing = set(target_backbone_sd.keys()) - set(pretrained_sd.keys())
-unexpected = set(pretrained_sd.keys()) - set(target_backbone_sd.keys())
-if missing or unexpected:
-    print(f"  WARNING: key mismatch. missing={len(missing)} unexpected={len(unexpected)}")
-else:
+def verify_backbone_transfer(pretrained_sd, arch_yaml="yolov8s.yaml"):
+    """Check pretrained_sd's keys/shapes match a fresh YOLO backbone (layers
+    0-9) and, if so, actually load them. Returns (ok, missing, unexpected)."""
+    target = YOLO(arch_yaml)
+    target_backbone_sd = target.model.model[:10].state_dict()
+    missing = set(target_backbone_sd.keys()) - set(pretrained_sd.keys())
+    unexpected = set(pretrained_sd.keys()) - set(target_backbone_sd.keys())
+    if missing or unexpected:
+        return False, missing, unexpected
     target.model.model[:10].load_state_dict(pretrained_sd, strict=True)
-    print("  Transfer OK: all backbone layers loaded with matching shapes, no mismatches.")
+    return True, missing, unexpected
+
+
+def main(
+    n_steps=N_STEPS, batch_size=BATCH_SIZE, img_size=IMG_SIZE, temperature=TEMPERATURE,
+    lr=LR, device=DEVICE, train_images_dir=TRAIN_IMAGES_DIR, out_backbone=OUT_BACKBONE,
+    arch_yaml="yolov8s.yaml", verbose=True,
+):
+    if verbose:
+        print(f"Device: {device}")
+        print("Building fresh (randomly initialized) YOLOv8s backbone...")
+    fresh = YOLO(arch_yaml)
+    backbone = fresh.model.model[:10].to(device)  # layers 0-9: Conv..SPPF, ends at 512ch
+    proj_head = ProjectionHead(in_dim=512).to(device)
+
+    params = list(backbone.parameters()) + list(proj_head.parameters())
+    optimizer = torch.optim.Adam(params, lr=lr)
+
+    all_images = glob.glob(f"{train_images_dir}/*")
+    if verbose:
+        print(f"Pretraining pool: {len(all_images)} images (labels ignored -- self-supervised)")
+        print(f"Steps: {n_steps}, batch_size: {batch_size}, img_size: {img_size}\n")
+
+    backbone.train()
+    proj_head.train()
+    t0 = time.time()
+    losses = []
+
+    for step in range(1, n_steps + 1):
+        batch_paths = random.sample(all_images, batch_size)
+        v1, v2 = load_batch(batch_paths, device=device)
+
+        feat1 = backbone(v1)  # (B, 512, h, w)
+        feat2 = backbone(v2)
+        pooled1 = F.adaptive_avg_pool2d(feat1, 1).flatten(1)  # (B, 512)
+        pooled2 = F.adaptive_avg_pool2d(feat2, 1).flatten(1)
+        z1 = proj_head(pooled1)
+        z2 = proj_head(pooled2)
+
+        loss = nt_xent_loss(z1, z2, temperature)
+
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+        losses.append(loss.item())
+        if verbose and (step % 20 == 0 or step == 1):
+            avg = sum(losses[-20:]) / len(losses[-20:])
+            elapsed = time.time() - t0
+            print(f"  step {step:4d}/{n_steps}  loss={loss.item():.4f}  avg20={avg:.4f}  elapsed={elapsed:.0f}s")
+
+    if verbose:
+        print(f"\nPretraining done in {time.time() - t0:.0f}s. "
+              f"Loss: {losses[0]:.4f} -> {sum(losses[-min(20, len(losses)):]) / min(20, len(losses)):.4f}")
+
+    torch.save(backbone.state_dict(), out_backbone)
+    if verbose:
+        print(f"Pretrained backbone saved: {out_backbone}")
+        print("\nVerifying transfer into a fresh YOLO model's backbone...")
+
+    ok, missing, unexpected = verify_backbone_transfer(backbone.state_dict(), arch_yaml=arch_yaml)
+    if verbose:
+        if not ok:
+            print(f"  WARNING: key mismatch. missing={len(missing)} unexpected={len(unexpected)}")
+        else:
+            print("  Transfer OK: all backbone layers loaded with matching shapes, no mismatches.")
+
+    return losses, ok
+
+
+if __name__ == "__main__":
+    main()

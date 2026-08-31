@@ -136,34 +136,39 @@ def overlay_heatmap(img_float, cam, size=IMG_SIZE):
     return (overlay * 255).astype(np.uint8)
 
 
-print("Loading model...")
-yolo = YOLO(BEST_PT)
-model = yolo.model
-model.eval()
+def main():
+    print("Loading model...")
+    yolo = YOLO(BEST_PT)
+    model = yolo.model
+    model.eval()
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model.to(device)
-# Ultralytics loads inference checkpoints with requires_grad=False on every
-# parameter (it's optimized for pure forward-pass inference) -- Grad-CAM needs
-# an actual autograd graph, so re-enable it.
-for p in model.parameters():
-    p.requires_grad_(True)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
+    # Ultralytics loads inference checkpoints with requires_grad=False on every
+    # parameter (it's optimized for pure forward-pass inference) -- Grad-CAM needs
+    # an actual autograd graph, so re-enable it.
+    for p in model.parameters():
+        p.requires_grad_(True)
 
-gradcam = GradCAM(model)
+    gradcam = GradCAM(model)
 
-samples = find_positive_samples(6)
-print(f"Running Grad-CAM on {len(samples)} labeled validation tiles...")
+    samples = find_positive_samples(6)
+    print(f"Running Grad-CAM on {len(samples)} labeled validation tiles...")
 
-for path in samples:
-    img_float, tensor = preprocess(path)
-    cam, class_id, conf = gradcam.explain_top_detection(tensor.to(device))
-    class_name = yolo.names[class_id]
-    overlay = overlay_heatmap(img_float, cam)
+    for path in samples:
+        img_float, tensor = preprocess(path)
+        cam, class_id, conf = gradcam.explain_top_detection(tensor.to(device))
+        class_name = yolo.names[class_id]
+        overlay = overlay_heatmap(img_float, cam)
 
-    name = os.path.splitext(os.path.basename(path))[0]
-    out_path = os.path.join(OUT_DIR, f"{name}_cam.png")
-    cv2.imwrite(out_path, cv2.cvtColor(overlay, cv2.COLOR_RGB2BGR))
-    flag = "" if conf >= 0.25 else "  (below normal 0.25 confidence threshold)"
-    print(f"  saved {out_path}  -- explaining: {class_name} ({conf*100:.0f}% confidence){flag}")
+        name = os.path.splitext(os.path.basename(path))[0]
+        out_path = os.path.join(OUT_DIR, f"{name}_cam.png")
+        cv2.imwrite(out_path, cv2.cvtColor(overlay, cv2.COLOR_RGB2BGR))
+        flag = "" if conf >= 0.25 else "  (below normal 0.25 confidence threshold)"
+        print(f"  saved {out_path}  -- explaining: {class_name} ({conf*100:.0f}% confidence){flag}")
 
-print(f"\nDone. Heatmaps saved to {OUT_DIR}")
+    print(f"\nDone. Heatmaps saved to {OUT_DIR}")
+
+
+if __name__ == "__main__":
+    main()
