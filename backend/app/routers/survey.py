@@ -7,8 +7,14 @@ from uuid import uuid4
 
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status
 
+from PIL import Image
+
 from app.models.schemas import JobStatus, SurveyMetadata, SurveyReport
 from app.pipeline.detect import run_detection
+from app.pipeline.filter import apply_noise_filter
+from app.pipeline.geotag import geotag_detections
+from app.pipeline.shadow_size import compute_metric_dimensions
+from app.pipeline.uncertainty import run_mc_dropout
 
 logger = logging.getLogger(__name__)
 
@@ -74,7 +80,7 @@ async def upload_survey(
 
 @router.post("/{survey_id}/analyze", response_model=SurveyReport)
 async def analyze_survey(survey_id: str):
-    """Trigger YOLOv8 detection on an uploaded survey."""
+    """Trigger full AI hydrographic detection, sizing, geotagging, and uncertainty pipeline on an uploaded survey."""
     if survey_id not in JOBS:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -83,6 +89,7 @@ async def analyze_survey(survey_id: str):
 
     job_entry = JOBS[survey_id]
     image_path: Path = job_entry["image_path"]
+    metadata: Optional[SurveyMetadata] = job_entry.get("metadata")
 
     if not image_path.exists():
         raise HTTPException(
@@ -91,17 +98,53 @@ async def analyze_survey(survey_id: str):
         )
 
     try:
+        # 1. Base YOLOv8 Inference
         job_entry["status"].stage = "YOLO_INFERENCE"
-        job_entry["status"].progress_pct = 50
+        job_entry["status"].progress_pct = 30
+        raw_detections = run_detection(image_path=image_path)
 
-        # Run inference
-        detections = run_detection(image_path=image_path)
+        # 2. False-Positive, Stripe Noise, and Tile-IoU Filter
+        job_entry["status"].stage = "FILTERING"
+        job_entry["status"].progress_pct = 45
+        filtered_detections = apply_noise_filter(raw_detections, metadata=metadata)
+
+        # 3. Read image dimensions
+        with Image.open(image_path) as img:
+            img_w, img_h = img.size
+
+        # 4. Physical Dimensions & Shadow Height Geometry
+        job_entry["status"].stage = "SHADOW_SIZING"
+        job_entry["status"].progress_pct = 60
+        for d in filtered_detections:
+            d.dimensions_m = compute_metric_dimensions(
+                bbox=d.bbox_px,
+                metadata=metadata,
+                image_width_px=img_w
+            )
+
+        # 5. Monte Carlo Dropout Uncertainty Estimation
+        job_entry["status"].stage = "MC_DROPOUT"
+        job_entry["status"].progress_pct = 80
+        enriched_detections = run_mc_dropout(
+            image_path=image_path,
+            base_detections=filtered_detections
+        )
+
+        # 6. WGS84 Geotagging & Geodesic Projection
+        job_entry["status"].stage = "GEOTAGGING"
+        job_entry["status"].progress_pct = 95
+        final_detections = geotag_detections(
+            detections=enriched_detections,
+            metadata=metadata,
+            image_width_px=img_w,
+            image_height_px=img_h
+        )
 
         # Build SurveyReport
         report = SurveyReport(
             survey_id=survey_id,
             image_filename=job_entry["image_filename"],
-            detections=detections,
+            detections=final_detections,
             processing_stage="COMPLETED"
         )
 

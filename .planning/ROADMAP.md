@@ -16,10 +16,10 @@
 **Goal:** Implement the physical hydrographic calculations required by the PS that the raw model does not provide on its own.
 
 ### Tasks:
-- [ ] **Task 2.1 (Geotagging Engine)**: Implement `backend/app/pipeline/geotag.py` with along-track ping traversal, across-track geodesic projection (WGS84 math), and dual-anchor interpolation fallback (`geo_confidence: "measured" | "estimated"`).
-- [ ] **Task 2.2 (Shadow Height & Sizing)**: Implement `backend/app/pipeline/shadow_size.py` to segment acoustic shadows behind bounding boxes and calculate real height $H \approx \frac{L_s \times A}{R_s + L_s}$ plus footprint length & width in meters.
-- [ ] **Task 2.3 (Uncertainty Scoring)**: Implement `backend/app/pipeline/uncertainty.py` using 15-pass Monte Carlo Dropout returning mean confidence % and standard deviation ($\sigma$) certainty bands (`HIGH`, `MODERATE`, `LOW`).
-- [ ] **Task 2.4 (False-Positive & Noise Filter)**: Implement `backend/app/pipeline/filter.py` with aspect ratio bounding, shadow presence verification, and tile overlap IoU duplicate suppression.
+- [x] **Task 2.1 (Geotagging Engine)**: Implement `backend/app/pipeline/geotag.py` with along-track ping traversal, across-track geodesic projection (WGS84 math), and dual-anchor interpolation fallback (`geo_confidence: "measured" | "estimated"`).
+- [x] **Task 2.2 (Shadow Height & Sizing)**: Implement `backend/app/pipeline/shadow_size.py` to segment acoustic shadows behind bounding boxes and calculate real height $H \approx \frac{L_s \times A}{R_s + L_s}$ plus footprint length & width in meters.
+- [x] **Task 2.3 (Uncertainty Scoring)**: Implement `backend/app/pipeline/uncertainty.py` using 15-pass Monte Carlo Dropout returning mean confidence % and standard deviation ($\sigma$) certainty bands (`HIGH`, `MODERATE`, `LOW`).
+- [x] **Task 2.4 (False-Positive & Noise Filter)**: Implement `backend/app/pipeline/filter.py` with aspect ratio bounding, shadow presence verification, and tile overlap IoU duplicate suppression.
 
 ---
 

@@ -8,13 +8,12 @@
 
 ## Phase Breakdown
 - [x] **Phase 1**: Backend Foundation & YOLOv8 Inference Engine (COMPLETED)
-- [ ] **Phase 2**: Hydrographic Analytics & Intelligence Modules (Geotag, Shadow Sizing, MC-Dropout, False-Positive Filter)
+- [x] **Phase 2**: Hydrographic Analytics & Intelligence Modules (COMPLETED)
 - [ ] **Phase 3**: Reporting, Persistence & Asynchronous Task Worker
 - [ ] **Phase 4**: Frontend Command Center Core (Next.js 16 + Tailwind CSS 4)
 - [ ] **Phase 5**: Extended Mission Suite & Fleet Analytics Dashboard
 - [ ] **Phase 6**: Edge Optimization Profiling, Simulation & Demo Dry-Run
 
 ## Next Actions
-1. Plan and execute Phase 2: Hydrographic Analytics & Intelligence Modules (`geotag.py`, `shadow_size.py`, `uncertainty.py`, `filter.py`).
-2. Implement background processing and reporting exports in Phase 3.
-3. Scaffold Frontend Command Center in Phase 4.
+1. Plan and execute Phase 3: Reporting, Persistence & Asynchronous Task Worker (`BackgroundTasks` job runner, `/survey/{id}/report.json`, `/survey/{id}/report.csv`, progress stages).
+2. Scaffold Frontend Command Center in Phase 4 (Next.js 16 + Tailwind CSS 4).
