@@ -81,3 +81,49 @@ python3 scripts/visualize_detections.py --image path/to/sonar.png
 `scripts/detect.py` exposes the same functionality as plain importable
 functions (`load_model`, `run_inference`, `build_composite`, `encode_png`)
 for a web backend to call directly, without going through the CLI.
+
+---
+
+## References
+
+### Datasets / Sonar Research
+
+[1] A. V. Sethuraman, A. Sheppard, O. Bagoren, C. Pinnow, J. Anderson, T. C. Havens, and K. A. Skinner, "Machine learning for shipwreck segmentation from side scan sonar imagery: Dataset and benchmark," *arXiv preprint arXiv:2401.14546*, 2024.
+
+[2] O. Álvarez-Tuñón, L. R. Marnet, L. Antal, M. Aubard, M. Costa, and Y. Brodskiy, "SubPipe: A submarine pipeline inspection dataset for segmentation and visual-inertial localization," in *Proc. OCEANS 2024*, Singapore, 2024, pp. 1–7, doi: 10.1109/OCEANS51537.2024.10682150.
+
+[3] N. P. Santos, R. Moura, G. S. Torgal, V. Lobo, and M. de Castro Neto, "Side-scan sonar imaging data of underwater vehicles for mine detection," *Data in Brief*, vol. 53, Art. no. 110132, 2024, doi: 10.1016/j.dib.2024.110132.
+
+[4] D. Singh and M. Valdenegro-Toro, "The marine debris dataset for forward-looking sonar semantic segmentation," in *Proc. IEEE/CVF Int. Conf. Comput. Vis. Workshops (ICCVW)*, 2021, pp. 3741–3749.
+
+[5] M. J. Er, J. Chen, Y. Zhang, and W. Gao, "Research challenges, recent advances, and popular datasets in deep learning-based underwater marine object detection: A review," *Sensors*, vol. 23, no. 4, Art. no. 1990, 2023, doi: 10.3390/s23041990.
+
+[6] M. Aubard, A. Madureira, L. Teixeira, and J. Pinto, "Sonar-based deep learning in underwater robotics: Overview, robustness and challenges," *arXiv preprint arXiv:2412.11840*, 2024.
+
+### Detection / YOLO
+
+[7] J. Terven, D. Córdova-Esparza, and J.-A. Romero-González, "A comprehensive review of YOLO architectures in computer vision: From YOLOv1 to YOLOv8 and YOLO-NAS," *Machine Learning and Knowledge Extraction*, vol. 5, no. 4, pp. 1680–1716, 2023, doi: 10.3390/make5040083.
+
+[8] G. Jocher, A. Chaurasia, and J. Qiu, *Ultralytics YOLOv8*, version 8.0.0, 2023. [Online]. Available: https://github.com/ultralytics/ultralytics
+
+### Explainability
+
+[9] R. R. Selvaraju, M. Cogswell, A. Das, R. Vedantam, D. Parikh, and D. Batra, "Grad-CAM: Visual explanations from deep networks via gradient-based localization," in *Proc. IEEE Int. Conf. Comput. Vis. (ICCV)*, 2017, pp. 618–626, doi: 10.1109/ICCV.2017.74.
+
+[10] M. B. Muhammad and M. Yeasin, "Eigen-CAM: Class activation map using principal components," *arXiv preprint arXiv:2008.00299*, 2020.
+
+### Uncertainty Estimation
+
+[11] Y. Gal and Z. Ghahramani, "Dropout as a Bayesian approximation: Representing model uncertainty in deep learning," in *Proc. 33rd Int. Conf. Mach. Learn. (ICML)*, vol. 48, 2016, pp. 1050–1059.
+
+### Federated Learning
+
+[12] B. McMahan, E. Moore, D. Ramage, S. Hampson, and B. A. y Arcas, "Communication-efficient learning of deep networks from decentralized data," in *Proc. 20th Int. Conf. Artif. Intell. Stat. (AISTATS)*, vol. 54, 2017, pp. 1273–1282.
+
+### Contrastive Learning
+
+[13] T. Chen, S. Kornblith, M. Norouzi, and G. Hinton, "A simple framework for contrastive learning of visual representations," in *Proc. 37th Int. Conf. Mach. Learn. (ICML)*, vol. 119, 2020, pp. 1597–1607.
+
+### Edge Deployment / Quantization
+
+[14] S. Boddu and A. Mukherjee, "Efficient edge deployment of quantized YOLOv4-Tiny for aerial emergency object detection on Raspberry Pi 5," *arXiv preprint arXiv:2506.09300*, 2025.
