@@ -27,10 +27,10 @@
 **Goal:** Complete the data persistence, background processing stepper, and structured export pipeline.
 
 ### Tasks:
-- [ ] **Task 3.1**: Implement FastAPI `BackgroundTasks` workflow to transition jobs through stages: `INGESTION` $\rightarrow$ `DENOISING` $\rightarrow$ `YOLO_INFERENCE` $\rightarrow$ `MC_DROPOUT` $\rightarrow$ `SHADOW_SIZING` $\rightarrow$ `GEOTAGGING` $\rightarrow$ `COMPLETED`.
-- [ ] **Task 3.2**: Implement `backend/app/routers/report.py` exposing downloadable `/survey/{id}/report.json` and tabular `/survey/{id}/report.csv`.
-- [ ] **Task 3.3**: Expose `/survey/{id}/status` and `/survey/{id}/detections` endpoints returning full structured JSON matching the UI contract.
-- [ ] **Task 3.4**: Write unit verification test simulating the entire survey processing lifecycle.
+- [x] **Task 3.1**: Implement FastAPI `BackgroundTasks` workflow to transition jobs through stages: `INGESTION` $\rightarrow$ `DENOISING` $\rightarrow$ `YOLO_INFERENCE` $\rightarrow$ `FILTERING` $\rightarrow$ `SHADOW_SIZING` $\rightarrow$ `MC_DROPOUT` $\rightarrow$ `GEOTAGGING` $\rightarrow$ `COMPLETED`.
+- [x] **Task 3.2**: Implement `backend/app/routers/report.py` exposing downloadable `/survey/{id}/report.json` and tabular `/survey/{id}/report.csv`.
+- [x] **Task 3.3**: Expose `/survey/{id}/status` and `/survey/{id}/detections` endpoints returning full structured JSON matching the UI contract, with disk persistence and lifespan cache recovery.
+- [x] **Task 3.4**: Write unit verification test simulating the entire survey processing lifecycle (`test_lifecycle.py`).
 
 ---
 

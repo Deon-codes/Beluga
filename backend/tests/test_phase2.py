@@ -164,15 +164,18 @@ def test_full_pipeline_upload_analyze():
     assert response.status_code == 201
     survey_id = response.json()["survey_id"]
 
-    # 2. Analyze survey
+    # 2. Analyze survey (Async BackgroundTasks returns 202)
     analyze_resp = client.post(f"/survey/{survey_id}/analyze")
-    assert analyze_resp.status_code == 200
-    report = analyze_resp.json()
-    assert report["survey_id"] == survey_id
-    assert report["processing_stage"] == "COMPLETED"
-
-    # 3. Check status
+    assert analyze_resp.status_code in [200, 202]
+    
+    # 3. Check status & completed detections
     status_resp = client.get(f"/survey/{survey_id}/status")
     assert status_resp.status_code == 200
     assert status_resp.json()["stage"] == "COMPLETED"
     assert status_resp.json()["progress_pct"] == 100
+
+    det_resp = client.get(f"/survey/{survey_id}/detections")
+    assert det_resp.status_code == 200
+    report = det_resp.json()
+    assert report["survey_id"] == survey_id
+    assert report["processing_stage"] == "COMPLETED"

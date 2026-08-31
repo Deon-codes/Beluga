@@ -31,10 +31,9 @@ Thumbs.db
 data/
 yolo_ready/
 
-# Backend — runtime artifacts
-backend/app/storage/uploads/
-backend/app/storage/reports/
-backend/app/storage/jobs/
+# Backend — runtime artifacts & uploaded survey storage
+backend/app/storage/*
+!backend/app/storage/.gitkeep
 backend/.env
 
 # Frontend — Node.js / Next.js

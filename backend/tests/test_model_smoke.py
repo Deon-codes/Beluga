@@ -82,13 +82,12 @@ def test_api_survey_lifecycle(sample_image_path):
     assert status_resp.status_code == 200
     assert status_resp.json()["stage"] == "INGESTION"
 
-    # 3. Analyze
+    # 3. Analyze (Async BackgroundTasks returns 202)
     analyze_resp = client.post(f"/survey/{survey_id}/analyze")
-    assert analyze_resp.status_code == 200
-    report_data = analyze_resp.json()
-    assert report_data["survey_id"] == survey_id
-    assert report_data["processing_stage"] == "COMPLETED"
-    assert "detections" in report_data
+    assert analyze_resp.status_code == 202
+    analyze_data = analyze_resp.json()
+    assert analyze_data["survey_id"] == survey_id
+    assert analyze_data["status"] in ["PROCESSING", "COMPLETED"]
 
     # 4. Status after analysis
     status_resp2 = client.get(f"/survey/{survey_id}/status")
