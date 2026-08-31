@@ -34,18 +34,19 @@
 
 ---
 
-## Phase 4: Frontend Command Center Core (Next.js 16 + Tailwind CSS 4)
+## Phase 4: Frontend Command Center Core (Next.js 15 + Tailwind CSS 4)
 **Goal:** Build the mission-critical sonar ingestion interface and interactive dual-viewport analysis screen.
 
 ### Tasks:
-- [ ] **Task 4.1**: Set up Next.js 16 App Router project with Tailwind CSS 4 theme tokens (`--color-abyss`, `--color-deep-navy`, `--color-panel`, `--color-cyan`, tabular-nums).
-- [ ] **Task 4.2**: Implement typed API client (`frontend/src/services/api.ts`) interfacing with all FastAPI endpoints.
-- [ ] **Task 4.3**: Build `SonarImageViewer.tsx` HTML5 Canvas component:
-  - Bounding box rendering with class-coded colors.
-  - Acoustic shadow vector projection lines.
-  - Hover highlights and click-to-select anomaly inspector.
-- [ ] **Task 4.4**: Build `ProcessingStepper.tsx`, `ConfidenceMeter.tsx` (mean % + $\pm\sigma$ band), `GeoBadge.tsx` (measured vs estimated), and `RiskBadge.tsx`.
-- [ ] **Task 4.5**: Implement `/surveys/new` (upload dropzone + nav metadata form) and `/surveys/[id]` (interactive analysis console).
+- [x] **Task 4.1**: Set up Next.js App Router project with Tailwind CSS 4 theme tokens (`--color-abyss`, `--color-deep-navy`, `--color-panel`, `--color-cyan`, tabular-nums, tactical animations).
+- [x] **Task 4.2**: Implement typed API client (`frontend/services/api.ts`) interfacing with all FastAPI endpoints with automatic fallback.
+- [x] **Task 4.3**: Build `SonarImageViewer.tsx` HTML5 Canvas component:
+  - Bounding box rendering with class-coded colors and corner reticles.
+  - Acoustic shadow vector projection lines & trigonometric relief derivations.
+  - Real scan image loading (`imageUrl`) from static FastAPI storage + procedural fallback.
+  - Interactive distance measurement ruler, pan/zoom, channel mode split, and colormaps.
+- [x] **Task 4.4**: Build `ProcessingStepper.tsx` (8-stage pipeline), `ConfidenceMeter.tsx` (mean % + $\pm\sigma$ band), `GeoBadge.tsx` (measured vs estimated), and `RiskBadge.tsx`.
+- [x] **Task 4.5**: Implement `/surveys/new` (upload dropzone + nav metadata form) and `/surveys/[id]` (interactive analysis console with live 1.5s polling).
 
 ---
 
@@ -53,10 +54,10 @@
 **Goal:** Build global telemetry, multi-survey catalog, and compliance export center.
 
 ### Tasks:
-- [ ] **Task 5.1**: Build `/dashboard` featuring Mission KPI counters (Total KM² scanned, hazards detected, high-risk ghost nets, avg certainty score), recent missions feed, and interactive seabed anomaly map.
-- [ ] **Task 5.2**: Build `/detections` global hazard catalog with multi-column filtering (Class, Risk level, Certainty, Date) and direct deep-link to survey inspect view.
-- [ ] **Task 5.3**: Build `/reports` center with formatted print/preview cards and one-click JSON/CSV download actions.
-- [ ] **Task 5.4**: Add dark mode oceanographic UI polish, telemetry tooltips, and responsive layout guards.
+- [x] **Task 5.1**: Build `/dashboard` featuring Mission KPI counters (Total KM² scanned, hazards detected, high-risk ghost nets, avg certainty score), recent missions feed, and interactive seabed anomaly bathymetric map.
+- [x] **Task 5.2**: Build `/detections` global hazard catalog with multi-column filtering (Class, Risk level, Certainty, Date) and direct deep-link to survey inspect view.
+- [x] **Task 5.3**: Build `/reports` center with formatted print/preview cards and one-click JSON/CSV download actions.
+- [x] **Task 5.4**: Add dark mode oceanographic UI polish, telemetry tooltips, and responsive layout guards in `ShellLayout.tsx`.
 
 ---
 

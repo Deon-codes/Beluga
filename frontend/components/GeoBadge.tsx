@@ -1,0 +1,60 @@
+import React from 'react';
+import { GeoConfidence } from '@/types';
+import { Crosshair, Navigation, MapPin } from 'lucide-react';
+
+interface GeoBadgeProps {
+  lat: number;
+  lon: number;
+  confidence: GeoConfidence;
+  compact?: boolean;
+  className?: string;
+}
+
+export function GeoBadge({ lat, lon, confidence, compact = false, className = '' }: GeoBadgeProps) {
+  const isMeasured = confidence === 'measured';
+
+  const formatCoordinate = (coord: number, isLatitude: boolean) => {
+    const absCoord = Math.abs(coord).toFixed(6);
+    const hemisphere = isLatitude ? (coord >= 0 ? 'N' : 'S') : coord >= 0 ? 'E' : 'W';
+    return `${absCoord}°${hemisphere}`;
+  };
+
+  const formattedLat = formatCoordinate(lat, true);
+  const formattedLon = formatCoordinate(lon, false);
+
+  return (
+    <div
+      className={`inline-flex items-center gap-2 font-mono text-xs border rounded-xs px-2 py-1 ${
+        isMeasured
+          ? 'bg-[#071a2e] border-cyan-500/50 text-cyan-200'
+          : 'bg-[#1f1708] border-amber-500/50 text-amber-200'
+      } ${className}`}
+    >
+      <div className="flex items-center gap-1 shrink-0 font-medium">
+        {isMeasured ? (
+          <Crosshair className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+        ) : (
+          <Navigation className="w-3.5 h-3.5 text-amber-400" />
+        )}
+        <span
+          className={`text-[10px] font-bold tracking-wider px-1 py-0.5 rounded-xs uppercase ${
+            isMeasured ? 'bg-cyan-950 text-cyan-400 border border-cyan-800' : 'bg-amber-950 text-amber-400 border border-amber-800'
+          }`}
+        >
+          {isMeasured ? 'MEASURED GPS' : 'ESTIMATED ANCHOR'}
+        </span>
+      </div>
+
+      {!compact && <span className="text-slate-500">|</span>}
+
+      <div className="flex items-center gap-1.5 font-mono font-medium tracking-tight text-slate-100">
+        <MapPin className="w-3 h-3 text-slate-400" />
+        <span>{formattedLat}</span>
+        <span className="text-slate-500">,</span>
+        <span>{formattedLon}</span>
+      </div>
+    </div>
+  );
+}
+
+export default GeoBadge;
