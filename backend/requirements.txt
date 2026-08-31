@@ -1,0 +1,26 @@
+# Backend dependencies — FastAPI inference & reporting service
+# See docs/01_BACKEND_SPEC.md for architecture details.
+
+# Web framework
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+
+# Data validation
+pydantic>=2.0.0
+
+# ML inference (YOLO)
+ultralytics>=8.4.0
+torch
+torchvision
+
+# Image processing
+opencv-python>=4.8.0
+pillow>=10.0.0
+numpy>=1.24.0
+
+# Geotagging / math (stdlib math is sufficient, numpy for arrays)
+# No extra deps needed.
+
+# Utilities
+python-multipart>=0.0.6    # file uploads
+python-dotenv>=1.0.0       # .env loading

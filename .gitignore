@@ -30,3 +30,18 @@ runs/
 Thumbs.db
 data/
 yolo_ready/
+
+# Backend — runtime artifacts
+backend/app/storage/uploads/
+backend/app/storage/reports/
+backend/app/storage/jobs/
+backend/.env
+
+# Frontend — Node.js / Next.js
+node_modules/
+.next/
+out/
+.env*.local
+
+
+docs/
