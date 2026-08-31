@@ -1,0 +1,10 @@
+{
+    "survey_id": "DEMO-2026-001",
+    "vessel": "USV-Explorer-01",
+    "date": "2026-08-31",
+    "track_points": [
+        {"timestamp": "2026-08-31T10:00:00Z", "lat": 15.2993, "lon": 73.9691, "depth": 14.2, "speed_knots": 4.1},
+        {"timestamp": "2026-08-31T10:00:10Z", "lat": 15.2995, "lon": 73.9692, "depth": 14.5, "speed_knots": 4.0},
+        {"timestamp": "2026-08-31T10:00:20Z", "lat": 15.2997, "lon": 73.9693, "depth": 14.1, "speed_knots": 4.2}
+    ]
+}

@@ -65,7 +65,7 @@
 **Goal:** Prepare live demonstration assets, edge performance numbers, and defensive pitch talking points for the SIH evaluators.
 
 ### Tasks:
-- [ ] **Task 6.1**: Run ONNX INT8 model quantization export benchmark script (`scripts/export_edge.py`) to generate edge latency & size reduction metrics (FP32 vs INT8) for presentation slides.
-- [ ] **Task 6.2**: Package sample sonar test scans with mock navigation headers for instant live demonstration.
-- [ ] **Task 6.3**: Perform complete end-to-end integration test (Upload $\rightarrow$ Stepper $\rightarrow$ Canvas Bounding Boxes $\rightarrow$ Geotags $\rightarrow$ CSV/JSON Export).
-- [ ] **Task 6.4**: Document live demo runbook and pitch defense points (addressing 17 classes, GPS interpolation honesty, and edge drone readiness).
+- [x] **Task 6.1**: Run ONNX INT8 model quantization export benchmark script (`scripts/export_edge.py`) to generate edge latency & size reduction metrics (FP32 vs INT8) for presentation slides.
+- [x] **Task 6.2**: Package sample sonar test scans with mock navigation headers for instant live demonstration.
+- [x] **Task 6.3**: Perform complete end-to-end integration test (Upload $\rightarrow$ Stepper $\rightarrow$ Canvas Bounding Boxes $\rightarrow$ Geotags $\rightarrow$ CSV/JSON Export).
+- [x] **Task 6.4**: Document live demo runbook and pitch defense points (addressing 17 classes, GPS interpolation honesty, and edge drone readiness).
