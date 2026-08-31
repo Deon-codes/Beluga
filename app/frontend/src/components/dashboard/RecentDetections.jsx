@@ -52,9 +52,6 @@ export default function RecentDetections() {
           </div>
         ))}
       </div>
-      <button className="mt-4 w-full rounded-lg py-2 text-sm font-medium text-sky-700 transition-colors hover:bg-sky-50 dark:text-cyan-300 dark:hover:bg-slate-800">
-        View All Detections →
-      </button>
     </div>
   );
 }
