@@ -97,7 +97,7 @@ export default function DashboardPage() {
 
           <div className="flex items-baseline justify-between">
             <div className="text-xl font-black text-slate-100 font-mono-tabular tracking-tight">
-              {metrics?.totalSeabedScannedKm2.toLocaleString() || '1,842.6'}{' '}
+              {metrics?.totalSeabedScannedKm2?.toLocaleString() || '1,842.6'}{' '}
               <span className="text-xs font-normal text-cyan-400">km²</span>
             </div>
           </div>

@@ -39,10 +39,10 @@ export default function SurveyArchivePage() {
 
   const filteredSurveys = surveys.filter(
     (s) =>
-      s.title.toLowerCase().includes(search.toLowerCase()) ||
-      s.id.toLowerCase().includes(search.toLowerCase()) ||
-      s.metadata.vessel_name?.toLowerCase().includes(search.toLowerCase()) ||
-      s.filename.toLowerCase().includes(search.toLowerCase())
+      s.title?.toLowerCase().includes(search.toLowerCase()) ||
+      s.id?.toLowerCase().includes(search.toLowerCase()) ||
+      s.metadata?.vessel_name?.toLowerCase().includes(search.toLowerCase()) ||
+      s.filename?.toLowerCase().includes(search.toLowerCase())
   );
 
   return (

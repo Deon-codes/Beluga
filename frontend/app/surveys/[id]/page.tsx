@@ -11,6 +11,7 @@ import {
   toggleDiverFlag,
   getReportDownloadUrl,
   buildStageStatuses,
+  getExplanation,
 } from '@/services/api';
 import { SonarImageViewer } from '@/components/SonarImageViewer';
 import { ProcessingStepper } from '@/components/ProcessingStepper';
@@ -54,6 +55,9 @@ export default function SurveyEvaluatorPage({ params }: SurveyEvaluatorProps) {
   const [isPolling, setIsPolling] = useState(false);
   const [diverFlagged, setDiverFlagged] = useState(false);
   const [actionSuccessMsg, setActionSuccessMsg] = useState<string | null>(null);
+
+  const [gradcamImage, setGradcamImage] = useState<string | null>(null);
+  const [isGeneratingExplain, setIsGeneratingExplain] = useState(false);
 
   const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -145,6 +149,7 @@ export default function SurveyEvaluatorPage({ params }: SurveyEvaluatorProps) {
     setSelectedAnomaly(anomaly);
     setDiverFlagged(!!anomaly.diver_recovery_flagged);
     setActionSuccessMsg(null);
+    setGradcamImage(null); // Reset Grad-CAM when target changes
   };
 
   // Next hazard shortcut traversal
@@ -475,6 +480,48 @@ export default function SurveyEvaluatorPage({ params }: SurveyEvaluatorProps) {
                       </strong>
                     </div>
                   </div>
+                )}
+              </div>
+
+              {/* Explainability (Grad-CAM) */}
+              <div className="bg-[#111d38] p-3 rounded-xs border border-[#1e293b] space-y-2">
+                <div className="flex items-center justify-between text-[11px] text-slate-400 border-b border-[#1e293b] pb-1">
+                  <span className="flex items-center gap-1.5 font-bold text-slate-200 uppercase">
+                    <Cpu className="w-3.5 h-3.5 text-cyan-400" />
+                    MODEL EXPLAINABILITY
+                  </span>
+                </div>
+                {gradcamImage ? (
+                  <div className="space-y-2">
+                    <img 
+                      src={`data:image/jpeg;base64,${gradcamImage}`} 
+                      alt="Grad-CAM Explainability" 
+                      className="w-full rounded-xs border border-[#1e293b]"
+                    />
+                    <div className="text-[10px] text-slate-500 text-center">Grad-CAM Heatmap overlay (YOLOv8s Neck)</div>
+                  </div>
+                ) : (
+                  <button
+                    onClick={async () => {
+                      setIsGeneratingExplain(true);
+                      try {
+                        const base64Str = await getExplanation(surveyId, selectedAnomaly.id);
+                        if (base64Str) setGradcamImage(base64Str);
+                      } catch(e) {
+                        console.error(e);
+                      } finally {
+                        setIsGeneratingExplain(false);
+                      }
+                    }}
+                    disabled={isGeneratingExplain}
+                    className="w-full py-2 bg-transparent hover:bg-slate-800 border border-slate-700 text-cyan-400 font-mono text-[11px] rounded-xs uppercase tracking-wider flex justify-center items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isGeneratingExplain ? (
+                      <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> GENERATING...</>
+                    ) : (
+                      <><Sparkles className="w-3.5 h-3.5" /> REQUEST GRAD-CAM HEATMAP</>
+                    )}
+                  </button>
                 )}
               </div>
 

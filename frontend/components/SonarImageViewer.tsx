@@ -175,9 +175,11 @@ export function SonarImageViewer({
   const fitToScreen = useCallback(() => {
     if (!containerRef.current) return;
     const { clientWidth, clientHeight } = containerRef.current;
+    if (clientWidth === 0 || clientHeight === 0) return;
+    
     const scaleX = clientWidth / virtualDims.width;
     const scaleY = clientHeight / virtualDims.height;
-    const bestScale = Math.max(scaleX, scaleY) * 0.95;
+    const bestScale = Math.max(0.1, Math.max(scaleX, scaleY) * 0.95);
     setScale(bestScale);
     setPan({
       x: (clientWidth - virtualDims.width * bestScale) / 2,
@@ -469,17 +471,27 @@ export function SonarImageViewer({
     redraw();
   }, [redraw]);
 
+  // Redraw when texture is explicitly regenerated
+  useEffect(() => {
+    redraw();
+  }, [renderAcousticTexture, redraw]);
+
   // Handle ResizeObserver
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
+    let initialFitDone = false;
     const ro = new ResizeObserver(() => {
+      if (!initialFitDone && container.clientWidth > 0) {
+        fitToScreen();
+        initialFitDone = true;
+      }
       redraw();
     });
     ro.observe(container);
     return () => ro.disconnect();
-  }, [redraw]);
+  }, [redraw, fitToScreen]);
 
   // Screen coordinates to virtual sonar coordinates
   const screenToVirtual = (screenX: number, screenY: number) => {

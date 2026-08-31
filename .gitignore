@@ -52,3 +52,6 @@ frontend/*.tsbuildinfo
 
 docs/
 test images/
+frontend/.agents/
+frontend/.claude/
+frontend/skills-lock.json

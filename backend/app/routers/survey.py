@@ -295,3 +295,73 @@ async def get_survey_detections(survey_id: str):
             detail=f"Survey analysis is currently in stage '{current_stage}'. Call /survey/{survey_id}/analyze and wait for COMPLETED."
         )
     return report
+
+@router.get("/{survey_id}/explain/{detection_id}")
+async def explain_detection(survey_id: str, detection_id: str):
+    """Generate Grad-CAM heatmap for a specific detection."""
+    from app.pipeline.explain import generate_heatmap_base64
+    if survey_id not in JOBS:
+        survey_dir = STORAGE_BASE / survey_id
+        report_file = survey_dir / "report.json"
+        if not report_file.exists():
+            raise HTTPException(status_code=404, detail="Survey not found")
+        report = SurveyReport.model_validate_json(report_file.read_text(encoding="utf-8"))
+        JOBS[survey_id] = {
+            "status": JobStatus(survey_id=survey_id, stage="COMPLETED", progress_pct=100),
+            "report": report,
+            "image_path": survey_dir / report.image_filename,
+            "image_filename": report.image_filename,
+            "metadata": None
+        }
+
+    job_entry = JOBS[survey_id]
+    report = job_entry.get("report")
+    if not report:
+        raise HTTPException(status_code=400, detail="Survey analysis not completed")
+
+    det = next((d for d in report.detections if d.id == detection_id), None)
+    if not det:
+        raise HTTPException(status_code=404, detail="Detection not found")
+
+    try:
+        base64_img = generate_heatmap_base64(job_entry["image_path"], det.class_id)
+        return {"detection_id": detection_id, "heatmap_base64": base64_img}
+    except Exception as e:
+        logger.error(f"Failed to generate explanation: {e}")
+        raise HTTPException(status_code=500, detail="Failed to generate heatmap")
+
+@router.get("/all")
+async def list_all_surveys():
+    """List all surveys."""
+    surveys = []
+    for sid, job in JOBS.items():
+        surveys.append({
+            "id": sid,
+            "status": job["status"].stage,
+            "progress_pct": job["status"].progress_pct,
+            "filename": job.get("image_filename", ""),
+            "uploaded_at": job["report"].generated_at.isoformat() if job.get("report") else None,
+        })
+    return {"surveys": surveys}
+
+@router.get("/dashboard_metrics")
+async def get_dashboard_metrics():
+    """Get aggregated dashboard metrics."""
+    all_detections = []
+    for job in JOBS.values():
+        if job.get("report"):
+            all_detections.extend(job["report"].detections)
+            
+    critical = sum(1 for d in all_detections if d.risk == "CRITICAL")
+    high = sum(1 for d in all_detections if d.risk == "HIGH")
+    medium = sum(1 for d in all_detections if d.risk == "MEDIUM")
+    low = sum(1 for d in all_detections if d.risk == "LOW")
+
+    return {
+        "confirmedHazardsTotal": len(all_detections),
+        "hazardsBreakdown": {
+            "critical": critical,
+            "infrastructure": high + medium,
+            "minor": low,
+        }
+    }

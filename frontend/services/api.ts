@@ -10,8 +10,6 @@ import {
   MetricDimensions,
   GeoLocation,
 } from '@/types';
-import { INITIAL_SURVEYS, INITIAL_METRICS } from '@/lib/sonar-data';
-
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 export const PIPELINE_STAGES_CONFIG: {
@@ -63,33 +61,7 @@ export function buildStageStatuses(currentStage: string, progressPct: number): P
   });
 }
 
-// In-memory & localStorage store for client-side state caching
-let memorySurveys: SurveyRecord[] = [...INITIAL_SURVEYS];
 
-export function getStoredSurveys(): SurveyRecord[] {
-  if (typeof window !== 'undefined') {
-    try {
-      const stored = localStorage.getItem('sonar_ai_surveys_v2');
-      if (stored) {
-        return JSON.parse(stored);
-      }
-    } catch {
-      // ignore parse errors
-    }
-  }
-  return memorySurveys;
-}
-
-export function setStoredSurveys(surveys: SurveyRecord[]) {
-  memorySurveys = surveys;
-  if (typeof window !== 'undefined') {
-    try {
-      localStorage.setItem('sonar_ai_surveys_v2', JSON.stringify(surveys));
-    } catch {
-      // ignore localStorage errors
-    }
-  }
-}
 
 // Normalizer: Convert FastAPI DetectionResult to rich AnomalyDetection
 export function normalizeDetection(raw: any, surveyId: string, imageWidth = 800): AnomalyDetection {
@@ -191,92 +163,13 @@ export async function uploadSurvey(file: File, metadata: Record<string, any>) {
     });
 
     if (res.ok) {
-      const data = await res.json();
-      const surveyId = data.survey_id;
-      const imageUrl = `${API_BASE}/storage/${surveyId}/${encodeURIComponent(data.filename || file.name)}`;
-
-      const newSurvey: SurveyRecord = {
-        id: surveyId,
-        title: metadata.title || file.name.replace(/\.[^/.]+$/, '').toUpperCase() + ' SURVEY',
-        filename: data.filename || file.name,
-        imageUrl: imageUrl,
-        uploaded_at: new Date().toISOString(),
-        status: 'INGESTION',
-        progress_pct: 10,
-        total_anomalies: 0,
-        critical_count: 0,
-        high_count: 0,
-        medium_count: 0,
-        low_count: 0,
-        metadata: {
-          vessel_name: metadata.vessel_name || 'ORV Sagar Nidhi (NIOT)',
-          sonar_frequency_khz: Number(metadata.sonar_frequency_khz) || 455,
-          swath_range_m: Number(metadata.swath_range_m) || 100,
-          resolution_m_px: Number(metadata.resolution_m_px) || 0.05,
-          altitude_m: Number(metadata.altitude_m) || 12.5,
-          heading_deg: Number(metadata.heading_deg) || 42.5,
-          start_coords: [Number(metadata.start_lat) || 13.0827, Number(metadata.start_lon) || 80.3128],
-          end_coords: [Number(metadata.end_lat) || 13.1492, Number(metadata.end_lon) || 80.3784],
-          water_depth_m: 58.4,
-          sound_velocity_mps: 1515.2,
-          mode: metadata.mode || 'Ping Header Metadata',
-          model_version: 'YOLOv8s-Sonar v2.1-NIOT',
-        },
-        stages: buildStageStatuses('INGESTION', 10),
-        detections: [],
-      };
-
-      const existing = getStoredSurveys();
-      setStoredSurveys([newSurvey, ...existing.filter((s) => s.id !== surveyId)]);
-
-      return data;
+      return await res.json();
     }
+    throw new Error('Failed to upload survey');
   } catch (err) {
-    console.warn('Backend upload unreachable, using local hydrographic simulator:', err);
+    console.error('Backend upload failed:', err);
+    throw err;
   }
-
-  // Graceful Fallback for offline demo mode
-  const surveyId = `SURV-2026-NIOT-${Math.floor(100 + Math.random() * 900)}`;
-  const newSurvey: SurveyRecord = {
-    id: surveyId,
-    title: metadata.title || file.name.replace(/\.[^/.]+$/, '').toUpperCase() + ' SURVEY',
-    filename: file.name,
-    imageUrl: 'procedural:pass03',
-    uploaded_at: new Date().toISOString(),
-    status: 'INGESTION',
-    progress_pct: 10,
-    total_anomalies: 0,
-    critical_count: 0,
-    high_count: 0,
-    medium_count: 0,
-    low_count: 0,
-    metadata: {
-      vessel_name: metadata.vessel_name || 'ORV Sagar Nidhi (NIOT)',
-      sonar_frequency_khz: Number(metadata.sonar_frequency_khz) || 455,
-      swath_range_m: Number(metadata.swath_range_m) || 100,
-      resolution_m_px: Number(metadata.resolution_m_px) || 0.05,
-      altitude_m: Number(metadata.altitude_m) || 12.5,
-      heading_deg: Number(metadata.heading_deg) || 42.5,
-      start_coords: [Number(metadata.start_lat) || 13.0827, Number(metadata.start_lon) || 80.3128],
-      end_coords: [Number(metadata.end_lat) || 13.1492, Number(metadata.end_lon) || 80.3784],
-      water_depth_m: 58.4,
-      sound_velocity_mps: 1515.2,
-      mode: metadata.mode || 'Ping Header Metadata',
-      model_version: 'YOLOv8s-Sonar v2.1-NIOT',
-    },
-    stages: buildStageStatuses('INGESTION', 10),
-    detections: [],
-  };
-
-  const existing = getStoredSurveys();
-  setStoredSurveys([newSurvey, ...existing]);
-
-  return {
-    survey_id: surveyId,
-    status: 'INGESTION',
-    filename: file.name,
-    message: 'Acoustic survey ingested into NIOT pipeline queue (Simulation mode)',
-  };
 }
 
 export async function triggerAnalysis(surveyId: string) {
@@ -287,52 +180,11 @@ export async function triggerAnalysis(surveyId: string) {
     if (res.ok) {
       return await res.json();
     }
+    throw new Error('Failed to trigger analysis');
   } catch (err) {
-    console.warn('Backend analyze unreachable, using local simulator:', err);
+    console.error('Backend analyze failed:', err);
+    throw err;
   }
-
-  // Fallback simulator
-  const surveys = getStoredSurveys();
-  const surveyIndex = surveys.findIndex((s) => s.id === surveyId);
-  if (surveyIndex !== -1) {
-    const s = surveys[surveyIndex];
-    if (s.detections.length === 0) {
-      const baseDetections = INITIAL_SURVEYS[0].detections.map((d, i) =>
-        normalizeDetection(
-          {
-            ...d,
-            id: `HAZ-2026-${Math.floor(100 + Math.random() * 900)}`,
-            survey_id: surveyId,
-            location: {
-              lat: s.metadata.start_coords[0] + i * 0.011,
-              lon: s.metadata.start_coords[1] + i * 0.009,
-              geo_confidence: i % 2 === 0 ? 'measured' : 'estimated',
-            },
-          },
-          surveyId
-        )
-      );
-
-      s.detections = baseDetections;
-      s.total_anomalies = baseDetections.length;
-      s.critical_count = baseDetections.filter((d) => d.risk === 'CRITICAL').length;
-      s.high_count = baseDetections.filter((d) => d.risk === 'HIGH').length;
-      s.medium_count = baseDetections.filter((d) => d.risk === 'MEDIUM').length;
-      s.low_count = baseDetections.filter((d) => d.risk === 'LOW').length;
-      s.status = 'COMPLETED';
-      s.progress_pct = 100;
-      s.stages = buildStageStatuses('COMPLETED', 100);
-      surveys[surveyIndex] = s;
-      setStoredSurveys([...surveys]);
-    }
-  }
-
-  return {
-    survey_id: surveyId,
-    status: 'PROCESSING',
-    pipeline_version: 'YOLOv8s-Sonar v2.1',
-    message: 'Hydrographic inference pipeline initiated',
-  };
 }
 
 export async function getSurveyStatus(surveyId: string): Promise<BackendJobStatus> {
@@ -342,19 +194,11 @@ export async function getSurveyStatus(surveyId: string): Promise<BackendJobStatu
       const data: BackendJobStatus = await res.json();
       return data;
     }
+    throw new Error('Failed to get status');
   } catch (err) {
-    // fallback
+    console.error('Backend status failed:', err);
+    throw err;
   }
-
-  const surveys = getStoredSurveys();
-  const survey = surveys.find((s) => s.id === surveyId) || INITIAL_SURVEYS[0];
-
-  return {
-    survey_id: survey.id,
-    stage: survey.status,
-    progress_pct: survey.progress_pct,
-    error: null,
-  };
 }
 
 export async function getSurveyDetections(
@@ -365,133 +209,124 @@ export async function getSurveyDetections(
     if (res.ok) {
       const report: BackendSurveyReport = await res.json();
       const normalizedDetections = (report.detections || []).map((d) => normalizeDetection(d, surveyId));
-      const surveys = getStoredSurveys();
-      let survey = surveys.find((s) => s.id === surveyId);
 
       const imageUrl = `${API_BASE}/storage/${surveyId}/${encodeURIComponent(report.image_filename)}`;
 
-      if (!survey) {
-        survey = {
-          id: surveyId,
-          title: report.image_filename.replace(/\.[^/.]+$/, '').toUpperCase() + ' SURVEY',
-          filename: report.image_filename,
-          imageUrl: imageUrl,
-          uploaded_at: report.generated_at || new Date().toISOString(),
-          status: 'COMPLETED',
-          progress_pct: 100,
-          total_anomalies: normalizedDetections.length,
-          critical_count: normalizedDetections.filter((d) => d.risk === 'CRITICAL').length,
-          high_count: normalizedDetections.filter((d) => d.risk === 'HIGH').length,
-          medium_count: normalizedDetections.filter((d) => d.risk === 'MEDIUM').length,
-          low_count: normalizedDetections.filter((d) => d.risk === 'LOW').length,
-          metadata: {
-            vessel_name: 'ORV Sagar Nidhi (NIOT)',
-            sonar_frequency_khz: 455,
-            swath_range_m: 100,
-            resolution_m_px: 0.05,
-            altitude_m: 12.5,
-            heading_deg: 42.5,
-            start_coords: [13.0827, 80.3128],
-            end_coords: [13.1492, 80.3784],
-            water_depth_m: 58.4,
-            sound_velocity_mps: 1515.2,
-            mode: 'Ping Header Metadata',
-            model_version: 'YOLOv8s-Sonar v2.1-NIOT',
-          },
-          stages: buildStageStatuses('COMPLETED', 100),
-          detections: normalizedDetections,
-        };
-      } else {
-        survey.imageUrl = imageUrl;
-        survey.status = 'COMPLETED';
-        survey.progress_pct = 100;
-        survey.detections = normalizedDetections;
-        survey.total_anomalies = normalizedDetections.length;
-        survey.stages = buildStageStatuses('COMPLETED', 100);
-      }
-
-      setStoredSurveys([survey, ...surveys.filter((s) => s.id !== surveyId)]);
+      const survey: SurveyRecord = {
+        id: surveyId,
+        title: report.image_filename.replace(/\.[^/.]+$/, '').toUpperCase() + ' SURVEY',
+        filename: report.image_filename,
+        imageUrl: imageUrl,
+        uploaded_at: report.generated_at || new Date().toISOString(),
+        status: 'COMPLETED',
+        progress_pct: 100,
+        total_anomalies: normalizedDetections.length,
+        critical_count: normalizedDetections.filter((d) => d.risk === 'CRITICAL').length,
+        high_count: normalizedDetections.filter((d) => d.risk === 'HIGH').length,
+        medium_count: normalizedDetections.filter((d) => d.risk === 'MEDIUM').length,
+        low_count: normalizedDetections.filter((d) => d.risk === 'LOW').length,
+        metadata: {
+          vessel_name: 'ORV Sagar Nidhi (NIOT)',
+          sonar_frequency_khz: 455,
+          swath_range_m: 100,
+          resolution_m_px: 0.05,
+          altitude_m: 12.5,
+          heading_deg: 42.5,
+          start_coords: [13.0827, 80.3128],
+          end_coords: [13.1492, 80.3784],
+          water_depth_m: 58.4,
+          sound_velocity_mps: 1515.2,
+          mode: 'Ping Header Metadata',
+          model_version: 'YOLOv8s-Sonar v2.1-NIOT',
+        },
+        stages: buildStageStatuses('COMPLETED', 100),
+        detections: normalizedDetections,
+      };
 
       return {
         detections: normalizedDetections,
         survey,
       };
     }
+    throw new Error('Failed to fetch detections');
   } catch (err) {
-    console.warn('Backend detections unreachable, reading cached survey:', err);
+    console.error('Backend detections unreachable:', err);
+    throw err;
   }
-
-  const surveys = getStoredSurveys();
-  const survey = surveys.find((s) => s.id === surveyId) || INITIAL_SURVEYS[0];
-
-  return {
-    detections: survey.detections,
-    survey,
-  };
 }
 
 export function getReportDownloadUrl(surveyId: string, format: 'json' | 'csv') {
   return `${API_BASE}/survey/${surveyId}/report.${format}`;
 }
 
-export async function getAllSurveys(): Promise<SurveyRecord[]> {
-  return getStoredSurveys();
+export async function getAllSurveys(): Promise<any[]> {
+  try {
+    const res = await fetch(`${API_BASE}/survey/all`);
+    if (res.ok) {
+      const data = await res.json();
+      return data.surveys;
+    }
+    return [];
+  } catch (err) {
+    console.error('Failed to get all surveys', err);
+    return [];
+  }
 }
 
-export async function getSurveyById(id: string): Promise<SurveyRecord | null> {
-  const surveys = getStoredSurveys();
+export async function getSurveyById(id: string): Promise<any | null> {
+  const surveys = await getAllSurveys();
   return surveys.find((s) => s.id === id) || null;
 }
 
 export async function getAllDetections(): Promise<AnomalyDetection[]> {
-  const surveys = getStoredSurveys();
+  const surveys = await getAllSurveys();
   const allDetections: AnomalyDetection[] = [];
   for (const s of surveys) {
-    for (const d of s.detections) {
-      allDetections.push({ ...d, survey_id: s.id });
+    if (s.status === 'COMPLETED') {
+        const res = await fetch(`${API_BASE}/survey/${s.id}/detections`);
+        if (res.ok) {
+           const report = await res.json();
+           const normalizedDetections = (report.detections || []).map((d: any) => normalizeDetection(d, s.id));
+           allDetections.push(...normalizedDetections);
+        }
     }
   }
   return allDetections;
 }
 
 export async function toggleDiverFlag(surveyId: string, anomalyId: string): Promise<boolean> {
-  const surveys = getStoredSurveys();
-  const survey = surveys.find((s) => s.id === surveyId);
-  if (!survey) return false;
-
-  const detection = survey.detections.find((d) => d.id === anomalyId);
-  if (!detection) return false;
-
-  detection.diver_recovery_flagged = !detection.diver_recovery_flagged;
-  setStoredSurveys([...surveys]);
-  return detection.diver_recovery_flagged;
+  // Mocking it for now as there's no endpoint to update diver flag
+  return true;
 }
 
-export async function getDashboardMetrics(): Promise<DashboardMetrics> {
-  const surveys = getStoredSurveys();
-  const allDetections: AnomalyDetection[] = [];
-  for (const s of surveys) {
-    for (const d of s.detections) {
-      allDetections.push(d);
+export async function getDashboardMetrics(): Promise<any> {
+  try {
+    const res = await fetch(`${API_BASE}/survey/dashboard_metrics`);
+    if (res.ok) {
+      return await res.json();
     }
+    throw new Error("Failed to load metrics");
+  } catch (e) {
+    console.error(e);
+    return {
+      confirmedHazardsTotal: 0,
+      hazardsBreakdown: { critical: 0, infrastructure: 0, minor: 0 }
+    };
   }
+}
 
-  const critical = allDetections.filter((d) => d.risk === 'CRITICAL').length;
-  const high = allDetections.filter((d) => d.risk === 'HIGH').length;
-  const medium = allDetections.filter((d) => d.risk === 'MEDIUM').length;
-  const low = allDetections.filter((d) => d.risk === 'LOW').length;
-
-  return {
-    ...INITIAL_METRICS,
-    confirmedHazardsTotal: allDetections.length,
-    hazardsBreakdown: {
-      critical: critical + 8,
-      infrastructure: high + medium + 12,
-      minor: low + 10,
-    },
-    recentAnomalies: allDetections.slice(0, 8),
-    recentSurveys: surveys,
-  };
+export async function getExplanation(surveyId: string, detectionId: string): Promise<string> {
+    try {
+        const res = await fetch(`${API_BASE}/survey/${surveyId}/explain/${detectionId}`);
+        if (res.ok) {
+            const data = await res.json();
+            return data.heatmap_base64;
+        }
+        throw new Error("Failed to get explanation");
+    } catch (e) {
+        console.error(e);
+        return "";
+    }
 }
 
 export function generateReportData(survey: SurveyRecord, format: 'json' | 'csv'): string {
