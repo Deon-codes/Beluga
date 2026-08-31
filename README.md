@@ -81,3 +81,36 @@ python3 scripts/visualize_detections.py --image path/to/sonar.png
 `scripts/detect.py` exposes the same functionality as plain importable
 functions (`load_model`, `run_inference`, `build_composite`, `encode_png`)
 for a web backend to call directly, without going through the CLI.
+
+## Survey reports (priority ranking + geotagging)
+
+`scripts/generate_report.py` runs detection across a whole folder of sonar
+images (a "survey") and produces one aggregate report (JSON + CSV) instead
+of per-image output:
+
+```bash
+python3 scripts/generate_report.py --folder path/to/survey_images --out report_dir
+```
+
+Each detection in the report gets:
+- **A priority tier** (1 = highest), grounded in the problem statement's own
+  named examples (`Pipeline`, `Shipwreck` = tier 1) rather than an invented
+  scheme — see `PRIORITY_TIERS` in `scripts/detect.py` for the full mapping
+  and reasoning. Sorted by tier first, then confidence within a tier.
+- **A geotag, where real position data exists.** Only `Pipeline`-class
+  detections from SubPipe get one — matched by timestamp against SubPipe's
+  own AUV navigation log (`EstimatedState.csv`). This is real **local x/y/z
+  position in meters, not GPS latitude/longitude** — no GPS origin reference
+  exists in the public dataset to convert to true coordinates. The nav log
+  also doesn't cover the *entire* sonar recording (it starts partway into
+  Chunk0 and ends partway through Chunk4), so even within SubPipe, some
+  detections will have no geotag. Every other source (KLSG, mine detection,
+  watertank) has no positional data available at all, and reports that
+  honestly as a null geotag rather than fabricating one.
+- **A low-confidence flag** (below 40%) rather than being silently dropped
+  from the report — so a human reviewer can still see borderline detections
+  instead of them disappearing. A separate, more rigorous TTA-based
+  uncertainty scoring tool exists (20 augmented passes per image, giving a
+  confidence ± spread rather than a single number) but isn't in this repo
+  yet — it's too slow to run on every detection in a large survey, so this
+  report uses a fast single-pass threshold as a first-pass filter instead.
