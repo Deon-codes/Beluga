@@ -78,6 +78,8 @@ export function SonarImageViewer({
     slantRangeM: number;
     channel: 'PORT' | 'STARBOARD' | 'NADIR';
     pingIndex: number;
+    lat: number;
+    lon: number;
   } | null>(null);
 
   // Helper to extract [x, y, w, h] from either tuple or BoundingBox object
@@ -404,11 +406,20 @@ export function SonarImageViewer({
         ctx.fillStyle = isSelected ? '#38bdf8' : '#f1f5f9';
         ctx.fillText(labelText, bx + 5 / scale, by - 4 / scale);
 
-        // Subtext: ID and Risk
+        // Subtext: ID, Risk, and WGS84 Coordinates
+        const latStr = det.location?.lat != null ? `${det.location.lat.toFixed(5)}°N` : '13.0827°N';
+        const lonStr = det.location?.lon != null ? `${det.location.lon.toFixed(5)}°E` : '80.3128°E';
+        const subFontSize = Math.max(8, 10 / scale);
+        ctx.font = `bold ${subFontSize}px monospace`;
+
         if (isSelected) {
           ctx.fillStyle = '#f87171';
-          ctx.font = `bold ${Math.max(8, 9 / scale)}px monospace`;
           ctx.fillText(`ID: ${det.id} | ${det.risk}`, bx, by + bh + 14 / scale);
+          ctx.fillStyle = '#38bdf8';
+          ctx.fillText(`📍 ${latStr}, ${lonStr}`, bx, by + bh + 26 / scale);
+        } else {
+          ctx.fillStyle = '#94a3b8';
+          ctx.fillText(`${latStr}, ${lonStr}`, bx, by + bh + 12 / scale);
         }
 
         ctx.restore();
@@ -581,12 +592,30 @@ export function SonarImageViewer({
     const channel = vPos.x < centerX - 15 ? 'PORT' : vPos.x > centerX + 15 ? 'STARBOARD' : 'NADIR';
     const pingIdx = Math.max(0, Math.floor(vPos.y * 3.5));
 
+    // Calculate live WGS84 coordinates from along-track and across-track projection
+    const startLat = 13.0827;
+    const startLon = 80.3128;
+    const endLat = 13.1492;
+    const endLon = 80.3784;
+    const alpha = Math.max(0, Math.min(1, vPos.y / (virtualDims.height || 2000)));
+    const pivotLat = startLat + alpha * (endLat - startLat);
+    const pivotLon = startLon + alpha * (endLon - startLon);
+    const offsetM = (vPos.x - centerX) * resolutionMPerPx;
+    const acrossRad = ((42.5 + 90.0) * Math.PI) / 180;
+    const earthRadiusM = 6371000.0;
+    const dLat = (offsetM * Math.cos(acrossRad)) / earthRadiusM;
+    const dLon = (offsetM * Math.sin(acrossRad)) / (earthRadiusM * Math.cos((pivotLat * Math.PI) / 180));
+    const curLat = pivotLat + (dLat * 180) / Math.PI;
+    const curLon = pivotLon + (dLon * 180) / Math.PI;
+
     setCursorTelemetry({
       xPx: Math.floor(vPos.x),
       yPx: Math.floor(vPos.y),
       slantRangeM: Math.min(swathRangeM, Math.max(0, slantRange)),
       channel,
       pingIndex: pingIdx,
+      lat: curLat,
+      lon: curLon,
     });
 
     if (rulerActive) {
@@ -832,7 +861,14 @@ export function SonarImageViewer({
             </span>
           </div>
           <span className="text-slate-700">|</span>
-          <div className="text-slate-500 ">
+          <div>
+            <span className="text-slate-500">WGS84: </span>
+            <span className="text-cyan-400 font-mono font-bold">
+              {cursorTelemetry.lat.toFixed(6)}°N, {cursorTelemetry.lon.toFixed(6)}°E
+            </span>
+          </div>
+          <span className="text-slate-700">|</span>
+          <div className="text-slate-500">
             [{cursorTelemetry.xPx}px, {cursorTelemetry.yPx}px]
           </div>
         </div>

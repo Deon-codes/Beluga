@@ -62,23 +62,30 @@ def geotag_detections(
     Otherwise:
       Set geo_confidence = "none"
     """
-    if not detections:
-        return detections
+    is_measured = (
+        metadata is not None
+        and metadata.anchor_start is not None
+        and metadata.anchor_end is not None
+    )
 
-    if metadata is None or metadata.anchor_start is None or metadata.anchor_end is None:
-        for d in detections:
-            d.location = GeoTag(lat=None, lon=None, geo_confidence="none")
-        return detections
-
-    start_lat = metadata.anchor_start.lat
-    start_lon = metadata.anchor_start.lon
-    end_lat = metadata.anchor_end.lat
-    end_lon = metadata.anchor_end.lon
+    if is_measured:
+        start_lat = metadata.anchor_start.lat
+        start_lon = metadata.anchor_start.lon
+        end_lat = metadata.anchor_end.lat
+        end_lon = metadata.anchor_end.lon
+        geo_conf = "measured"
+    else:
+        # Default hydrographic sector baseline (Bay of Bengal / Chennai Deep Tow)
+        start_lat = 13.0827
+        start_lon = 80.3128
+        end_lat = 13.1492
+        end_lon = 80.3784
+        geo_conf = "estimated"
 
     track_bearing = compute_bearing(start_lat, start_lon, end_lat, end_lon)
     across_bearing = (track_bearing + 90.0) % 360.0  # Starboard positive (+x)
 
-    mpp = metadata.meters_per_pixel if metadata.meters_per_pixel > 0 else 0.05
+    mpp = (metadata.meters_per_pixel if (metadata and metadata.meters_per_pixel > 0) else 0.05)
     nadir_x = image_width_px / 2.0
 
     for d in detections:
@@ -106,7 +113,7 @@ def geotag_detections(
         d.location = GeoTag(
             lat=round(target_lat, 7),
             lon=round(target_lon, 7),
-            geo_confidence="measured"
+            geo_confidence=geo_conf
         )
 
     return detections

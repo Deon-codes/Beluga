@@ -10,6 +10,9 @@ import {
   getSurveyById,
   toggleDiverFlag,
   getReportDownloadUrl,
+  downloadSurveyReport,
+  downloadLatexReport,
+  downloadMarkdownReport,
   buildStageStatuses,
   getExplanation,
 } from '@/services/api';
@@ -37,6 +40,8 @@ import {
   Layers,
   Sparkles,
   RefreshCw,
+  Code2,
+  FileDown,
 } from 'lucide-react';
 
 interface SurveyEvaluatorProps {
@@ -197,6 +202,40 @@ export default function SurveyEvaluatorPage({ params }: SurveyEvaluatorProps) {
     setTimeout(() => setActionSuccessMsg(null), 3000);
   };
 
+  // Full survey report download handler (CSV / JSON / LaTeX / MD)
+  const handleDownloadReport = async (format: 'json' | 'csv') => {
+    setActionSuccessMsg(`Generating and downloading ${format.toUpperCase()} hydrographic report...`);
+    const success = await downloadSurveyReport(currentSurvey.id, format, currentSurvey);
+    if (success) {
+      setActionSuccessMsg(`Successfully downloaded NIOT_MoES_REPORT_${currentSurvey.id}.${format}`);
+    } else {
+      setActionSuccessMsg(`Failed to download report for survey ${currentSurvey.id}`);
+    }
+    setTimeout(() => setActionSuccessMsg(null), 4000);
+  };
+
+  const handleDownloadLatex = async () => {
+    setActionSuccessMsg(`Generating LaTeX (.tex) hydrographic report...`);
+    const success = await downloadLatexReport(currentSurvey.id, currentSurvey);
+    if (success) {
+      setActionSuccessMsg(`Downloaded NIOT_MoES_REPORT_${currentSurvey.id}.tex`);
+    } else {
+      setActionSuccessMsg(`Failed to download LaTeX report`);
+    }
+    setTimeout(() => setActionSuccessMsg(null), 4000);
+  };
+
+  const handleDownloadMarkdown = async () => {
+    setActionSuccessMsg(`Generating Markdown (.md) hydrographic report...`);
+    const success = await downloadMarkdownReport(currentSurvey.id, currentSurvey);
+    if (success) {
+      setActionSuccessMsg(`Downloaded NIOT_MoES_REPORT_${currentSurvey.id}.md`);
+    } else {
+      setActionSuccessMsg(`Failed to download Markdown report`);
+    }
+    setTimeout(() => setActionSuccessMsg(null), 4000);
+  };
+
   if (loading && !survey) {
     return (
       <div className="flex flex-col items-center justify-center h-full space-y-3 ">
@@ -296,24 +335,46 @@ export default function SurveyEvaluatorPage({ params }: SurveyEvaluatorProps) {
           </div>
 
           <div className="flex items-center gap-1.5">
-            <a
-              href={getReportDownloadUrl(currentSurvey.id, 'json')}
-              download={`report_${currentSurvey.id}.json`}
-              className="flex items-center gap-1 px-2 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-800 border border-slate-700 hover:border-cyan-600 rounded-xl text-slate-700 dark:text-slate-200 transition-colors"
+            <Link
+              href="/reports"
+              className="flex items-center gap-1 px-2.5 py-1 bg-primary-600 hover:bg-primary-500 text-white rounded-xl text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+              title="Open Official Human Review & PDF Audit Certificate"
+            >
+              <FileText className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">PDF REVIEW</span>
+            </Link>
+            <button
+              onClick={handleDownloadLatex}
+              className="flex items-center gap-1 px-2.5 py-1 bg-indigo-950/40 hover:bg-indigo-900/60 border border-indigo-700/60 text-indigo-300 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
+              title="Download Academic / Defense LaTeX Report (.tex)"
+            >
+              <Code2 className="w-3.5 h-3.5 text-indigo-400" />
+              <span className="hidden md:inline">LATEX</span>
+            </button>
+            <button
+              onClick={handleDownloadMarkdown}
+              className="flex items-center gap-1 px-2.5 py-1 bg-emerald-950/40 hover:bg-emerald-900/60 border border-emerald-700/60 text-emerald-300 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
+              title="Download GitHub-Flavored Markdown Report (.md)"
+            >
+              <FileDown className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="hidden md:inline">MD</span>
+            </button>
+            <button
+              onClick={() => handleDownloadReport('json')}
+              className="flex items-center gap-1 px-2.5 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-800 border border-slate-700 hover:border-cyan-600 rounded-xl text-slate-700 dark:text-slate-200 text-xs font-semibold transition-colors cursor-pointer"
               title="Download Raw JSON Hydrographic Report"
             >
               <FileText className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
               <span className="hidden sm:inline">JSON</span>
-            </a>
-            <a
-              href={getReportDownloadUrl(currentSurvey.id, 'csv')}
-              download={`report_${currentSurvey.id}.csv`}
-              className="flex items-center gap-1 px-2 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-800 border border-slate-700 hover:border-cyan-600 rounded-xl text-slate-700 dark:text-slate-200 transition-colors"
+            </button>
+            <button
+              onClick={() => handleDownloadReport('csv')}
+              className="flex items-center gap-1 px-2.5 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-800 border border-slate-700 hover:border-cyan-600 rounded-xl text-slate-700 dark:text-slate-200 text-xs font-semibold transition-colors cursor-pointer"
               title="Download Hydrographic CSV Matrix"
             >
               <Download className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span className="hidden sm:inline">CSV</span>
-            </a>
+            </button>
           </div>
         </div>
       </div>

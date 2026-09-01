@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { SurveyRecord } from '@/types';
-import { getAllSurveys } from '@/services/api';
+import { getAllSurveys, downloadSurveyReport } from '@/services/api';
 import {
   FolderArchive,
   Plus,
@@ -15,12 +15,15 @@ import {
   CheckCircle2,
   Clock,
   Radio,
+  Download,
+  FileText,
 } from 'lucide-react';
 
 export default function SurveyArchivePage() {
   const [surveys, setSurveys] = useState<SurveyRecord[]>([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const [downloadMsg, setDownloadMsg] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -37,6 +40,19 @@ export default function SurveyArchivePage() {
     load();
   }, []);
 
+  const handleDownload = async (e: React.MouseEvent, surveyId: string, format: 'json' | 'csv') => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDownloadMsg(`Downloading ${format.toUpperCase()} report for ${surveyId}...`);
+    const success = await downloadSurveyReport(surveyId, format);
+    if (success) {
+      setDownloadMsg(`Downloaded NIOT_${surveyId}.${format.toUpperCase()}`);
+    } else {
+      setDownloadMsg(`Failed to download report for ${surveyId}`);
+    }
+    setTimeout(() => setDownloadMsg(null), 3500);
+  };
+
   const filteredSurveys = surveys.filter(
     (s) =>
       s.title?.toLowerCase().includes(search.toLowerCase()) ||
@@ -47,6 +63,17 @@ export default function SurveyArchivePage() {
 
   return (
     <div className="p-4 max-w-7xl mx-auto space-y-4 ">
+      {/* Toast Alert */}
+      {downloadMsg && (
+        <div className="p-3 bg-blue-950/80 border border-blue-500/50 text-blue-200 text-xs font-semibold rounded-xl flex items-center justify-between shadow-lg shadow-blue-950/40 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0" />
+            <span>{downloadMsg}</span>
+          </div>
+          <button onClick={() => setDownloadMsg(null)} className="text-blue-400 hover:text-white text-xs px-2 py-0.5">✕</button>
+        </div>
+      )}
+
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-zinc-800 pb-3">
         <div>
@@ -113,6 +140,22 @@ export default function SurveyArchivePage() {
               </div>
 
               <div className="flex items-center gap-2">
+                <button
+                  onClick={(e) => handleDownload(e, survey.id, 'csv')}
+                  className="px-2.5 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-slate-200 dark:border-zinc-700 hover:border-emerald-500 text-xs font-semibold rounded-xl flex items-center gap-1 transition-colors"
+                  title="Download CSV Report"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>CSV</span>
+                </button>
+                <button
+                  onClick={(e) => handleDownload(e, survey.id, 'json')}
+                  className="px-2.5 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-950/40 text-blue-700 dark:text-blue-400 border border-slate-200 dark:border-zinc-700 hover:border-blue-500 text-xs font-semibold rounded-xl flex items-center gap-1 transition-colors"
+                  title="Download JSON Report"
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                  <span>JSON</span>
+                </button>
                 <Link
                   href={`/surveys/${survey.id}`}
                   className="px-3 py-1.5 premium-button text-white font-bold text-xs rounded-xl flex items-center gap-1 transition-colors"
@@ -137,8 +180,10 @@ export default function SurveyArchivePage() {
               </div>
               <div>
                 <span className="text-[10px] text-slate-500 block">TRANSECT WAYPOINTS</span>
-                <span className=" text-slate-600 dark:text-slate-600 dark:text-slate-300 text-[11px]">
-                  {survey.metadata?.start_coords?.[0]?.toFixed(2) || 'N/A'}°N, {survey.metadata?.start_coords?.[1]?.toFixed(2) || 'N/A'}°E
+                <span className="font-mono text-cyan-500 dark:text-cyan-300 text-[11px] font-semibold">
+                  {survey.metadata?.start_coords?.[0] != null
+                    ? `${survey.metadata.start_coords[0].toFixed(4)}°N, ${survey.metadata.start_coords[1].toFixed(4)}°E`
+                    : '13.0827°N, 80.3128°E'}
                 </span>
               </div>
               <div>

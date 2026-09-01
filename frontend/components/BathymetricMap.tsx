@@ -89,10 +89,17 @@ export function BathymetricMap({ surveys, anomalies, onSelectAnomaly, className 
 
       {/* Vector Geospatial Layer */}
       <div
-        className="w-full h-full relative transition-transform duration-300 ease-out sonar-grid"
-        style={{ transform: `scale(${zoom})`, transformOrigin: 'center center' }}
+        className="w-full h-full relative transition-transform duration-300 ease-out sonar-grid bg-[#0a1128]"
+        style={{ 
+          transform: `scale(${zoom})`, 
+          transformOrigin: 'center center',
+          backgroundImage: showContours ? 'url(/images/bathymetric_bg.jpg)' : 'none',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
       >
-        {/* SVG Bathymetric Contours & Survey Tracklines */}
+        {/* Dynamic Overlay Elements */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none stroke-slate-800">
           <defs>
             <linearGradient id="trackGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -100,44 +107,6 @@ export function BathymetricMap({ surveys, anomalies, onSelectAnomaly, className 
               <stop offset="100%" stopColor="#22d3ee" stopOpacity="0.3" />
             </linearGradient>
           </defs>
-
-          {/* Bathymetry isobath lines */}
-          {showContours && (
-            <g className="opacity-40">
-              <path
-                d="M 0,120 Q 250,90 500,160 T 1000,130"
-                fill="none"
-                stroke="#0e3a5a"
-                strokeWidth="1.5"
-                strokeDasharray="4 4"
-              />
-              <text x="50" y="115" fill="#0284c7" fontSize="9" fontFamily="monospace">
-                -20m ISOBATH
-              </text>
-
-              <path
-                d="M 0,260 Q 300,210 600,290 T 1000,240"
-                fill="none"
-                stroke="#0e3a5a"
-                strokeWidth="1.5"
-                strokeDasharray="4 4"
-              />
-              <text x="50" y="255" fill="#0284c7" fontSize="9" fontFamily="monospace">
-                -50m ISOBATH
-              </text>
-
-              <path
-                d="M 0,420 Q 200,380 500,450 T 1000,400"
-                fill="none"
-                stroke="#0e3a5a"
-                strokeWidth="1.5"
-                strokeDasharray="4 4"
-              />
-              <text x="50" y="415" fill="#0284c7" fontSize="9" fontFamily="monospace">
-                -100m ISOBATH
-              </text>
-            </g>
-          )}
 
           {/* Ghost Net Cluster Hazard Zone */}
           <circle cx="58%" cy="48%" r="40" fill="#fca5a5" fillOpacity="0.08" stroke="#f87171" strokeWidth="1" strokeDasharray="4 4" />

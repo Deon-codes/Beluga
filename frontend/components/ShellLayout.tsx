@@ -17,6 +17,8 @@ import {
   Menu,
 } from 'lucide-react';
 
+import Image from 'next/image';
+
 interface ShellLayoutProps {
   children: React.ReactNode;
 }
@@ -44,9 +46,15 @@ export function ShellLayout({ children }: ShellLayoutProps) {
       >
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between p-6 pb-4">
-            <Link href="/dashboard" className="flex items-center gap-4 overflow-hidden group">
-              <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 text-white shadow-md shadow-primary-500/20 shrink-0 transition-transform group-hover:scale-105">
-                <Activity className="w-5 h-5" />
+            <Link href="/dashboard" className="flex items-center gap-3.5 overflow-hidden group">
+              <div className="relative w-10 h-10 rounded-xl overflow-hidden shadow-md ring-1 ring-slate-200/80 dark:ring-zinc-800 shrink-0 transition-transform group-hover:scale-105 bg-slate-900">
+                <Image
+                  src="/images/logo.jpeg"
+                  alt="Beluga Logo"
+                  fill
+                  className="object-cover"
+                  priority
+                />
               </div>
               {!collapsed && (
                 <div className="min-w-0 transition-opacity duration-300">

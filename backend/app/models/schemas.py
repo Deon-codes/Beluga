@@ -9,8 +9,12 @@ class GeoPoint(BaseModel):
     lon: float
 
 class SurveyMetadata(BaseModel):
+    title: Optional[str] = None
+    vessel_name: Optional[str] = "ORV Sagar Nidhi (NIOT)"
     vehicle_speed_mps: Optional[float] = None       # m/s — along-track resolution
-    sonar_altitude_m: Optional[float] = None        # m — shadow height formula
+    sonar_altitude_m: Optional[float] = 12.5        # m — shadow height formula
+    swath_range_m: Optional[float] = 100.0          # m
+    heading_deg: Optional[float] = 42.5
     meters_per_pixel: float = 0.05                  # across-track resolution default
     anchor_start: Optional[GeoPoint] = None         # GPS start (Option B geotag)
     anchor_end: Optional[GeoPoint] = None           # GPS end (Option B geotag)
