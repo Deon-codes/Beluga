@@ -316,9 +316,11 @@ export async function getExplanation(surveyId: string, detectionId: string): Pro
             const data = await res.json();
             return data.heatmap_base64;
         }
-        throw new Error("Failed to get explanation");
+        const errorMsg = await res.text();
+        console.warn(`Failed to get explanation: ${res.status} ${errorMsg}`);
+        return "";
     } catch (e) {
-        console.error(e);
+        console.warn('Network or parsing error in getExplanation:', e);
         return "";
     }
 }

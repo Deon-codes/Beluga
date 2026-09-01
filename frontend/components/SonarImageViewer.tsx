@@ -146,8 +146,6 @@ export function SonarImageViewer({
 
   // Generate / Cache offscreen acoustic image on canvas (when using procedural waterfall)
   const renderAcousticTexture = useCallback(() => {
-    if (realImageRef.current) return; // Skip procedural if real image loaded
-
     if (!offscreenCanvasRef.current) {
       offscreenCanvasRef.current = document.createElement('canvas');
     }
@@ -157,13 +155,45 @@ export function SonarImageViewer({
     const offCtx = off.getContext('2d');
     if (!offCtx) return;
 
-    drawSonarWaterfall(offCtx, virtualDims.width, virtualDims.height, {
-      width: virtualDims.width,
-      height: virtualDims.height,
-      preset,
-      colormap,
-      channelMode,
-    });
+    if (realImageRef.current) {
+      // Draw real image
+      offCtx.drawImage(realImageRef.current, 0, 0, virtualDims.width, virtualDims.height);
+
+      // Apply filters for real images
+      if (colormap === 'cyan-tactical') {
+        offCtx.fillStyle = 'rgba(34, 211, 238, 0.4)';
+        offCtx.globalCompositeOperation = 'overlay';
+        offCtx.fillRect(0, 0, virtualDims.width, virtualDims.height);
+        offCtx.globalCompositeOperation = 'source-over';
+      } else if (colormap === 'phosphor-green') {
+        offCtx.fillStyle = 'rgba(74, 222, 128, 0.4)';
+        offCtx.globalCompositeOperation = 'overlay';
+        offCtx.fillRect(0, 0, virtualDims.width, virtualDims.height);
+        offCtx.globalCompositeOperation = 'source-over';
+      } else if (colormap === 'grayscale') {
+        offCtx.globalCompositeOperation = 'color';
+        offCtx.fillStyle = 'black';
+        offCtx.fillRect(0, 0, virtualDims.width, virtualDims.height);
+        offCtx.globalCompositeOperation = 'source-over';
+      }
+
+      // Apply channel modes
+      if (channelMode === 'port') {
+        offCtx.fillStyle = '#070d1e';
+        offCtx.fillRect(virtualDims.width / 2, 0, virtualDims.width / 2, virtualDims.height);
+      } else if (channelMode === 'starboard') {
+        offCtx.fillStyle = '#070d1e';
+        offCtx.fillRect(0, 0, virtualDims.width / 2, virtualDims.height);
+      }
+    } else {
+      drawSonarWaterfall(offCtx, virtualDims.width, virtualDims.height, {
+        width: virtualDims.width,
+        height: virtualDims.height,
+        preset,
+        colormap,
+        channelMode,
+      });
+    }
   }, [preset, colormap, channelMode, virtualDims]);
 
   // Initial draw & colormap change
@@ -223,9 +253,7 @@ export function SonarImageViewer({
     ctx.scale(scale, scale);
 
     // 1. Draw Acoustic Texture (Real Image or Cached Procedural Canvas)
-    if (realImageRef.current) {
-      ctx.drawImage(realImageRef.current, 0, 0, virtualDims.width, virtualDims.height);
-    } else if (offscreenCanvasRef.current) {
+    if (offscreenCanvasRef.current) {
       ctx.drawImage(offscreenCanvasRef.current, 0, 0);
     }
 
@@ -476,6 +504,11 @@ export function SonarImageViewer({
     redraw();
   }, [renderAcousticTexture, redraw]);
 
+  const redrawRef = useRef(redraw);
+  useEffect(() => {
+    redrawRef.current = redraw;
+  }, [redraw]);
+
   // Handle ResizeObserver
   useEffect(() => {
     const container = containerRef.current;
@@ -487,11 +520,11 @@ export function SonarImageViewer({
         fitToScreen();
         initialFitDone = true;
       }
-      redraw();
+      redrawRef.current();
     });
     ro.observe(container);
     return () => ro.disconnect();
-  }, [redraw, fitToScreen]);
+  }, [fitToScreen]);
 
   // Screen coordinates to virtual sonar coordinates
   const screenToVirtual = (screenX: number, screenY: number) => {
@@ -509,11 +542,8 @@ export function SonarImageViewer({
     const vPos = screenToVirtual(clickX, clickY);
 
     if (rulerActive) {
-      if (!rulerPoints.start) {
-        setRulerPoints({ start: vPos, end: vPos });
-      } else {
-        setRulerPoints((prev) => ({ ...prev, end: vPos }));
-      }
+      setRulerPoints({ start: vPos, end: vPos });
+      setIsDragging(true);
       return;
     }
 
@@ -559,8 +589,10 @@ export function SonarImageViewer({
       pingIndex: pingIdx,
     });
 
-    if (rulerActive && rulerPoints.start && isDragging) {
-      setRulerPoints((prev) => ({ ...prev, end: vPos }));
+    if (rulerActive) {
+      if (isDragging && rulerPoints.start) {
+        setRulerPoints((prev) => ({ ...prev, end: vPos }));
+      }
       return;
     }
 
@@ -643,8 +675,16 @@ export function SonarImageViewer({
         <span className="text-blue-600 dark:text-blue-400 ">ZOOM {(scale * 100).toFixed(0)}%</span>
       </div>
 
+      {/* Ruler Tool Prompt Banner */}
+      {rulerActive && (
+        <div className="absolute top-3 left-1/2 -translate-x-1/2 bg-amber-950/90 text-amber-300 border border-amber-500/80 px-3 py-1 rounded-xl text-xs flex items-center gap-2 shadow-lg animate-pulse pointer-events-none z-20">
+          <Ruler className="w-3.5 h-3.5" />
+          <span className="font-semibold">RULER ACTIVE: Click & drag anywhere on the sonar canvas to measure distance</span>
+        </div>
+      )}
+
       {/* Top Right Channel Mode Pills */}
-      <div className="absolute top-3 right-3 flex items-center gap-1 bg-white dark:bg-zinc-900/90 backdrop-blur-xs border border-slate-200 dark:border-zinc-800 p-1 rounded-xl">
+      <div className="absolute top-3 right-3 flex items-center gap-1 bg-white dark:bg-zinc-900/90 backdrop-blur-xs border border-slate-200 dark:border-zinc-800 p-1 rounded-xl z-20">
         {(['split', 'port', 'starboard'] as const).map((mode) => (
           <button
             key={mode}

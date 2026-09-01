@@ -508,7 +508,7 @@ export default function SurveyEvaluatorPage({ params }: SurveyEvaluatorProps) {
                         const base64Str = await getExplanation(surveyId, selectedAnomaly.id);
                         if (base64Str) setGradcamImage(base64Str);
                       } catch(e) {
-                        console.error(e);
+                        console.warn('Failed to load gradcam explanation', e);
                       } finally {
                         setIsGeneratingExplain(false);
                       }

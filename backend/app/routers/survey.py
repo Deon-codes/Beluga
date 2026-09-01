@@ -327,8 +327,8 @@ async def explain_detection(survey_id: str, detection_id: str):
         base64_img = generate_heatmap_base64(job_entry["image_path"], det.class_id)
         return {"detection_id": detection_id, "heatmap_base64": base64_img}
     except Exception as e:
-        logger.error(f"Failed to generate explanation: {e}")
-        raise HTTPException(status_code=500, detail="Failed to generate heatmap")
+        logger.exception(f"Failed to generate explanation: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/all")
 async def list_all_surveys():

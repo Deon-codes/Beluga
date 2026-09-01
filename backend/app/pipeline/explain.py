@@ -20,10 +20,19 @@ class GradCAM:
         self.layer_indices = layer_indices
         self.activations = {}
         self.gradients = {}
+        self.handles = []
         for idx in layer_indices:
             layer = model.model[idx]
-            layer.register_forward_hook(self._make_activation_hook(idx))
-            layer.register_full_backward_hook(self._make_gradient_hook(idx))
+            self.handles.append(layer.register_forward_hook(self._make_activation_hook(idx)))
+            self.handles.append(layer.register_full_backward_hook(self._make_gradient_hook(idx)))
+
+    def remove_hooks(self):
+        for h in self.handles:
+            try:
+                h.remove()
+            except Exception:
+                pass
+        self.handles.clear()
 
     def _make_activation_hook(self, idx):
         def hook(module, inp, out):
@@ -70,6 +79,24 @@ class GradCAM:
             cam /= cam.max()
         return cam, class_id, conf
 
+
+def _clean_inference_tensors(model):
+    """
+    Ultralytics caching in smart_inference_mode creates inference tensors in model buffers/attributes.
+    Clone them so PyTorch autograd can track computation graphs during Grad-CAM backward.
+    """
+    for m in model.modules():
+        for name, buf in list(m.named_buffers(recurse=False)):
+            if buf is not None and getattr(buf, "is_inference", lambda: False)():
+                m._buffers[name] = buf.clone()
+        if hasattr(m, "anchors") and getattr(m.anchors, "is_inference", lambda: False)():
+            m.anchors = m.anchors.clone()
+        if hasattr(m, "strides") and getattr(m.strides, "is_inference", lambda: False)():
+            m.strides = m.strides.clone()
+        if hasattr(m, "shape"):
+            m.shape = None
+
+
 def generate_heatmap_base64(image_path: Path, class_id: int):
     """
     Generates a Grad-CAM heatmap for the specified class_id and returns it as a base64 encoded PNG.
@@ -86,10 +113,12 @@ def generate_heatmap_base64(image_path: Path, class_id: int):
     device = next(model.parameters()).device
     tensor = tensor.to(device)
     
+    _clean_inference_tensors(model)
     model.eval()
     for p in model.parameters():
         p.requires_grad_(True)
 
+    gradcam = None
     try:
         gradcam = GradCAM(model)
         cam, _, _ = gradcam.explain_top_detection(tensor, target_class_id=class_id)
@@ -107,4 +136,7 @@ def generate_heatmap_base64(image_path: Path, class_id: int):
         encoded = base64.b64encode(buffer).decode('utf-8')
         return f"data:image/png;base64,{encoded}"
     finally:
-        pass
+        if gradcam is not None:
+            gradcam.remove_hooks()
+        for p in model.parameters():
+            p.requires_grad_(False)
